@@ -31,7 +31,7 @@ const Side = () => {
                             <div>   <Image src="/newsetting.svg" width={20} height={20} alt='' /> </div>
                         </div>
                         <div className=' flex flex-col gap-y-[29px]'>
-                            <Link href="/cards" className='text-[#625BF7] text-[16px] font-bold'>Pricing Plans</Link>
+                            <Link href="/card" className='text-[#625BF7] text-[16px] font-bold'>Pricing Plans</Link>
                             <Link href="/signup" className='text-[#625BF7] text-[16px] font-bold'>Setting</Link>
 
                         </div>
