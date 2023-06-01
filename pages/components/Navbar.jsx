@@ -30,12 +30,8 @@ const Navbar = () => {
     window.addEventListener("scroll", changeColor);
   }, []);
 
-  // if (router.pathname === "/Userdashboard" || "/Youtubeservices") return;
   return (
-    <div
-      style={{ backgroundColor: `${color}` }}
-      className="fixed left-0 top-0 w-full z-10 ease-in duration-300"
-    >
+    <div className="fixed left-0 top-0 w-full bg-[#F4F4F4] z-10 ease-in duration-300">
       <div className="w-auto mx-8  flex justify-between items-center py-4 text-white">
         <div className="flex items-center">
           {/* <div>
