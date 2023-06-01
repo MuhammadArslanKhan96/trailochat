@@ -9,7 +9,7 @@ const Signin = () => {
         <>
             <section className="flex justify-center relative"
                 style={{
-                    backgroundImage: `url('/Background Pattern.svg')`,
+                    backgroundImage: `url('/images/Pattern.svg')`,
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
 
@@ -25,7 +25,7 @@ const Signin = () => {
                         <div className="text-black  text-[18px] pt-[16px] font-bold">Email address or username</div>
                         <div className="flex items-center gap-x-2 my-[12px] bg-[#FFFFFF] border border-[#EAEBF6] rounded-full py-[12px] px-[24px]">
                             <div className="text-[#C0C3D0] ">
-                                <Image src="/user.svg" width={24} height={24} alt="" />
+                                <Image src="/images/user.svg" width={24} height={24} alt="" />
                             </div>
                             <input placeholder="Type here" className="text-[#C0C3D0] outline-none border-none" />
 
@@ -33,11 +33,11 @@ const Signin = () => {
                         <div className="text-black  text-[18px] pt-[12px] font-bold">Password</div>
                         <div className="flex justify-between items-center gap-x-2 my-[12px] bg-[#FFFFFF] border border-[#EAEBF6] rounded-full py-[12px] px-[24px]">
                             <div className="text-[#C0C3D0] ">
-                                <Image src="/Lock.svg" width={20} height={20} alt="" />
+                                <Image src="/images/Lock.svg" width={20} height={20} alt="" />
                             </div>
                             <input placeholder="******" type="password" className="text-[#C0C3D0] outline-none border-none items-center" />
                             <div className="text-[#C0C3D0] ">
-                                <Image src="/eye-slash.svg" width={24} height={24} alt="" />
+                                <Image src="/images/eye-slash.svg" width={24} height={24} alt="" />
                             </div>
                         </div>
                         <div className="flex text-[#FFFFFF] font-bold text-center justify-center items-center gap-x-2 my-[20px] bg-[#625BF7]  rounded-[10px] py-[12px] px-[24px]">

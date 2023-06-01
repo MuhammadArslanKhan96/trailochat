@@ -23,7 +23,7 @@ const Send = () => {
                                 >
                                     Mindmap
                                     <span className="ml-4 w-2">
-                                        <Image src="/arrow.svg" width={9} height={6} alt='' />
+                                        <Image src="/images/arrow.svg" width={9} height={6} alt='' />
                                     </span>
                                 </button>
                                 {open && <ul

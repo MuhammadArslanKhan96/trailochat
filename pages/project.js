@@ -28,7 +28,7 @@ const Project = () => {
                                     onClick={() => setOpen(!open)}>
                                     Trello
                                     <span className="ml-4 w-2">
-                                        <Image src="/arrow.svg" width={9} height={6} alt='' />
+                                        <Image src="/images/arrow.svg" width={9} height={6} alt='' />
                                     </span>
                                 </button>
                                 {open && <ul
@@ -73,7 +73,7 @@ const Project = () => {
 
                                                     <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
                                                         <div>
-                                                            <Image src="/calendar_today.svg" width={10} height={11} alt='' />
+                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
                                                         </div>
                                                         <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>
@@ -93,7 +93,7 @@ const Project = () => {
 
                                                     <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
                                                         <div>
-                                                            <Image src="/calendar_today.svg" width={10} height={11} alt='' />
+                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
                                                         </div>
                                                         <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>
@@ -113,7 +113,7 @@ const Project = () => {
 
                                                     <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
                                                         <div>
-                                                            <Image src="/calendar_today.svg" width={10} height={11} alt='' />
+                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
                                                         </div>
                                                         <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>
@@ -141,7 +141,7 @@ const Project = () => {
 
                                                     <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
                                                         <div>
-                                                            <Image src="/calendar_today.svg" width={10} height={11} alt='' />
+                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
                                                         </div>
                                                         <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>
@@ -161,7 +161,7 @@ const Project = () => {
 
                                                     <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
                                                         <div>
-                                                            <Image src="/calendar_today.svg" width={10} height={11} alt='' />
+                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
                                                         </div>
                                                         <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>
@@ -181,7 +181,7 @@ const Project = () => {
 
                                                     <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
                                                         <div>
-                                                            <Image src="/calendar_today.svg" width={10} height={11} alt='' />
+                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
                                                         </div>
                                                         <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>
@@ -209,7 +209,7 @@ const Project = () => {
 
                                                     <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
                                                         <div>
-                                                            <Image src="/calendar_today.svg" width={10} height={11} alt='' />
+                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
                                                         </div>
                                                         <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>
@@ -229,7 +229,7 @@ const Project = () => {
 
                                                     <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
                                                         <div>
-                                                            <Image src="/calendar_today.svg" width={10} height={11} alt='' />
+                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
                                                         </div>
                                                         <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>
@@ -249,7 +249,7 @@ const Project = () => {
 
                                                     <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
                                                         <div>
-                                                            <Image src="/calendar_today.svg" width={10} height={11} alt='' />
+                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
                                                         </div>
                                                         <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>

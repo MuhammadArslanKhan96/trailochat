@@ -13,7 +13,7 @@ const Signup = () => {
         <>
             <section className="flex justify-center bg-[#FFFFFF]"
                 style={{
-                    backgroundImage: `url('/Background Pattern.svg')`,
+                    backgroundImage: `url('/images/Pattern.svg')`,
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
                 }}

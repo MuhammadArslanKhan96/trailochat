@@ -27,8 +27,8 @@ const Side = () => {
 
                     <div className='flex justify-center gap-x-[27px] items-center'>
                         <div className=' flex flex-col gap-y-[29px]'>
-                            <div>    <Image src="/newdollar.svg" width={14} height={24} alt='' /> </div>
-                            <div>   <Image src="/newsetting.svg" width={20} height={20} alt='' /> </div>
+                            <div>    <Image src="/images/newdollar.svg" width={14} height={24} alt='' /> </div>
+                            <div>   <Image src="/images/newsetting.svg" width={20} height={20} alt='' /> </div>
                         </div>
                         <div className=' flex flex-col gap-y-[29px]'>
                             <Link href="/card" className='text-[#625BF7] text-[16px] font-bold'>Pricing Plans</Link>

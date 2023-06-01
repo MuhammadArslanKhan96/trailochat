@@ -23,7 +23,7 @@ const Chart = () => {
                                     onClick={() => setOpen(!open)}>
                                     Mindmap
                                     <span className="ml-4 w-2">
-                                        <Image src="/arrow.svg" width={9} height={6} alt='' />
+                                        <Image src="/images/arrow.svg" width={9} height={6} alt='' />
                                     </span>
                                 </button>
 
@@ -56,7 +56,7 @@ const Chart = () => {
                         <div className='flex flex-col justify-center items-center  '>
                             <div className='flex items-center gap-x-4 mb-6'>
                                 <div>
-                                    <Image src="/Profile.svg" width={50} height={50} alt='' />
+                                    <Image src="/images/Profile.svg" width={50} height={50} alt='' />
                                 </div>
                                 <div className='text-[16px] text-[#625BF7] font-bold'>Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</div>
                             </div>
