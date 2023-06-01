@@ -6,7 +6,7 @@ const Envision = () => {
     <>
       <div className="flex justify-center   bg-[#FFFFFF]">
         <div className="flex flex-col justify-center pr-40 py-[55px]">
-          <div className="text-[40px] font-medium ">
+          <div className="text-[40px] font-medium  drop-shadow-[7px_3px_20px_rgba(0,0,0,0.25)] ">
             <p>Envision a scenario </p>
             <p>where you have the </p>
             <p>ability to...</p>

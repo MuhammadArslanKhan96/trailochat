@@ -7,7 +7,10 @@ const Trelloboard = () => {
       <div className="flex justify-center pt-[55px] flex-col bg-[#FFFFFF]">
         <div className="flex justify-center gap-x-20   ">
           <div className="flex flex-col">
-            <p className="text-[45px] font-bold pb-[21px]"> Trello boards</p>
+            <p className="text-[45px] font-bold pb-[21px] drop-shadow-[7px_3px_20px_rgba(0,0,0,0.25)]">
+              {" "}
+              Trello boards
+            </p>
             <p className="text-[20px]">
               Effortlessly manage your projects and streamline team <br />
               collaboration with our powerful Trello Board. With intuitive drag-{" "}

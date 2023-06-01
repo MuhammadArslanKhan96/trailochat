@@ -17,7 +17,7 @@ const Mapping = () => {
               AI mind mapping tool today and experience the future of ideation.
             </p>
             <div className="px-[40px] mt-[55px] text-[#0E1FA2] r w-fit py-[8px] border-[3px] border-[#0E1FA2]  rounded-full">
-              Try it mow
+              Try it now
             </div>
           </div>
           <div>
