@@ -3,8 +3,8 @@ import React from "react";
 const Footer = () => {
   return (
     <>
-      <div className="bg-[#152250] pt-[100px] pb-[20px]">
-        <div className="flex flex-col items-center  py-[40px]   justify-center self-center">
+      <div className="bg-[#152250] pt-[400px] pb-[10px]">
+        {/* <div className="flex flex-col items-center  py-[40px]   justify-center self-center">
           <div className="flex flex-col ml-[25px] gap-y-3 text-[#ffffff] text-[21px] font-light">
             <p>Support</p>
             <p>Pricing</p>
@@ -12,7 +12,7 @@ const Footer = () => {
             <p>Language</p>
             <p>Contact us</p>
           </div>
-        </div>
+        </div> */}
         <div className="flex justify-between px-[80px]">
           <div className="flex flex-col ">
             <p className="font-normal  text-[35px] text-[#FFF]">
@@ -39,9 +39,9 @@ const Footer = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col font-medium text-[27px] text-[#FFF]">
+          {/* <div className="flex flex-col font-medium text-[27px] text-[#FFF]">
             Resources
-          </div>
+          </div> */}
           <div className="flex flex-col  ">
             <p className="font-bold text-[27px] text-[#FFF]">
               {" "}
