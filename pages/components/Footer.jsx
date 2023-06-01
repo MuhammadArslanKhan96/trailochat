@@ -52,7 +52,7 @@ const Footer = () => {
                 {" "}
                 <input
                   placeholder="Enter your email..."
-                  className="bg-[#343434] rounded-[17px] py-[17px] w-full px-[14px] text-[20px]"
+                  className="bg-[#343434] border border-[#DFDFDF] text-[#DFDFDF] outline-none  rounded-[17px] py-[17px] w-full px-[14px] text-[20px]"
                 />
               </div>
               <div className="bg-[#FF5C00] flex justify-center rounded-[17px] py-[17px]">
@@ -64,7 +64,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="flex justify-center text-center py-[13px]">
+      <div className="flex justify-center text-center pt-[13px] pb-[5px]">
         <p className="text-[15px]">COPYRIGHT © 2023- GPT-Mindmap</p>
       </div>
     </>

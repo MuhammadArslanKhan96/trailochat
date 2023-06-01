@@ -4,7 +4,7 @@ import Image from "next/image";
 const Plan = () => {
   return (
     <>
-      <div className="flex justify-center flex-col py-[55px]  bg-[#e7e5e5]">
+      <div className="flex justify-center flex-col py-[55px]  bg-[#F4F4F4]">
         <div className="flex flex-col text-center pb-[55px] ">
           <p className="text-[40px] self-center font-bold  ">
             Choose Your Plan
@@ -32,8 +32,8 @@ const Plan = () => {
             </div>
           </div>
         </div>
-        <div className="flex gap-x-10 justify-center pt-[70px]">
-          <div className=" mt-[90px] max-w-sm  bg-white border border-gray-200 rounded-[25px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
+        <div className="flex gap-x-20 justify-center pt-[70px]">
+          <div className=" mt-[90px] max-w-sm  bg-white border border-[#353030] rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
             <div className="flex justify-center">
               <h5 className=" text-[37px] font-bold   text-[#000000]">
                 Free trial
@@ -99,8 +99,8 @@ const Plan = () => {
               </button>
             </div>
           </div>
-          <div className=" mb-[90px] max-w-sm  text-[#ffffff] bg-black border border-gray-200 rounded-[25px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)]    ">
-            <div className="bg-[#3D45FF] text-[27px] rounded-[10px] py-[10px] w-full flex justify-center text-center">
+          <div className=" mb-[90px] max-w-sm  text-[#ffffff] bg-black   rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)]    ">
+            <div className="bg-[#3D45FF]  text-[27px] rounded-[15px] py-[10px] w-full flex justify-center text-center">
               {" "}
               Enhanced Package
             </div>
@@ -123,8 +123,8 @@ const Plan = () => {
                 <li className="flex space-x-3 items-center">
                   <Image
                     src="/images/greencheck.svg"
-                    width={30}
-                    height={30}
+                    width={18}
+                    height={20}
                     alt=""
                   />
                   <span className="text-[15px] font-bold">
@@ -134,8 +134,8 @@ const Plan = () => {
                 <li className="flex space-x-3 items-center">
                   <Image
                     src="/images/greencheck.svg"
-                    width={30}
-                    height={30}
+                    width={18}
+                    height={20}
                     alt=""
                   />
                   <span className="text-[15px] font-bold">
@@ -145,8 +145,8 @@ const Plan = () => {
                 <li className="flex space-x-3 items-center">
                   <Image
                     src="/images/greencheck.svg"
-                    width={30}
-                    height={30}
+                    width={18}
+                    height={20}
                     alt=""
                   />
                   <span className="text-[15px] font-bold">
@@ -156,8 +156,8 @@ const Plan = () => {
                 <li className="flex space-x-3 items-center">
                   <Image
                     src="/images/greencheck.svg"
-                    width={30}
-                    height={30}
+                    width={18}
+                    height={20}
                     alt=""
                   />
                   <span className="text-[15px] font-bold">
@@ -167,8 +167,8 @@ const Plan = () => {
                 <li className="flex space-x-3 items-center">
                   <Image
                     src="/images/greencheck.svg"
-                    width={30}
-                    height={30}
+                    width={18}
+                    height={20}
                     alt=""
                   />
                   <span className="text-[15px] font-bold">
@@ -186,7 +186,7 @@ const Plan = () => {
               </div>
             </div>
           </div>
-          <div className=" mt-[90px] max-w-sm  bg-white border border-gray-200 rounded-[25px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
+          <div className=" mt-[90px] max-w-sm  bg-white border border-[#353030] rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
             <div className="flex justify-center">
               <h5 className=" text-[30px] font-bold   text-[#000000]">
                 Standard Package

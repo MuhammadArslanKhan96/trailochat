@@ -4,8 +4,8 @@ import React from "react";
 const Getstarted = () => {
   return (
     <>
-      <div className="flex bg-[#0b0d52] justify-center items-center py-[60px]">
-        <div className="flex flex-col">
+      <div className="flex bg-[#0b0d52] justify-center  items-center py-[60px]">
+        <div className="flex flex-col ">
           <div className="flex gap-x-2 items-center">
             <span class="flex w-3 h-3 bg-[#ECA53C] rounded-full"></span>
             <p className="text-[28px] text-[#e83838] font-bold ">
@@ -34,7 +34,7 @@ const Getstarted = () => {
             </button>
           </div>
         </div>
-        <div>
+        <div className="">
           <Image src="/images/bulb.svg" width={800} height={500} alt="" />
         </div>
       </div>
