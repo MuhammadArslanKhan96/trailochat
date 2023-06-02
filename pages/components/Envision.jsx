@@ -5,7 +5,7 @@ const Envision = () => {
   return (
     <>
       <div className="flex justify-center   bg-[#FFFFFF]">
-        <div className="flex flex-col justify-center pr-40 py-[55px]">
+        <div className="flex flex-col justify-center pr-20 py-[55px]">
           <div className="text-[40px] font-medium  drop-shadow-[7px_3px_20px_rgba(0,0,0,0.25)] ">
             <p>Envision a scenario </p>
             <p>where you have the </p>
@@ -32,7 +32,7 @@ const Envision = () => {
             </button>
           </div>
         </div>
-        <div class=" h-auto min-h-[1em] w-0.5 bg-[#000000] opacity-100 dark:opacity-50"></div>
+        <div class=" h-auto min-h-[1em] w-0.5 ml-20 bg-[#000000] opacity-100 dark:opacity-50"></div>
         <div className="flex flex-col justify-center pl-20 py-[55px]">
           <div className="flex flex-col gap-y-10">
             <div className="flex  gap-x-5">

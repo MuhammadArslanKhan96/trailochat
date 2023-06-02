@@ -4,8 +4,8 @@ import React from "react";
 const Getstarted = () => {
   return (
     <>
-      <div className="flex bg-[#0b0d52] justify-center  items-center py-[60px]">
-        <div className="flex flex-col ">
+      <div className="flex bg-[#0b0d52] justify-center   items-center py-[60px]">
+        <div className="flex flex-col pl-[80px]">
           <div className="flex gap-x-2 items-center">
             <span class="flex w-3 h-3 bg-[#ECA53C] rounded-full"></span>
             <p className="text-[28px] text-[#e83838] font-bold ">

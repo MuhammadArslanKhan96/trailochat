@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   return (
     <>
-      <div className="bg-[#152250] pt-[400px] pb-[10px]">
+      <div className="bg-[#152250] pt-[69px] pb-[100px]">
         {/* <div className="flex flex-col items-center  py-[40px]   justify-center self-center">
           <div className="flex flex-col ml-[25px] gap-y-3 text-[#ffffff] text-[21px] font-light">
             <p>Support</p>
@@ -29,7 +29,7 @@ const Footer = () => {
           </div>
           <div className="flex flex-col ">
             <p className="font-medium text-[27px] text-[#FFF]"> Resources </p>
-            <div className="flex justify-center py-[33px]  text-[#ffffff] text-[21px] font-light">
+            <div className="flex justify-center py-[33px]  text-[#ffffff] text-[22px] font-normal">
               <div className="flex flex-col gap-y-3">
                 <p>Support</p>
                 <p>FAQ</p>
@@ -47,15 +47,22 @@ const Footer = () => {
               {" "}
               Subscribe to our Newsletter{" "}
             </p>
-            <div className="pt-[100px] flex-col ">
-              <div className="pb-[25px]">
+            <p className="text-[22px] font-normal text-[#FFF] pt-[33px]">
+              Stay informed, stay connected! Our newsletter brings you the{" "}
+              <br />
+              latest updates, insights, and trends in the world of AI and <br />
+              beyond. Join our community and be at the forefront of the <br />
+              conversation.
+            </p>
+            <div className="pt-[30px] flex  gap-x-6 ">
+              <div className="">
                 {" "}
                 <input
                   placeholder="Enter your email..."
-                  className="bg-[#343434] border border-[#DFDFDF] text-[#DFDFDF] outline-none  rounded-[17px] py-[17px] w-full px-[14px] text-[20px]"
+                  className="bg-[#343434] border border-[#DFDFDF] text-[#DFDFDF] outline-none  rounded-[17px] py-[17px] w-full pl-[14px] pr-[70px] text-[20px]"
                 />
               </div>
-              <div className="bg-[#FF5C00] flex justify-center rounded-[17px] py-[17px]">
+              <div className="bg-[#FF5C00] flex justify-center rounded-[17px]  px-[82px] py-[17px]">
                 <button className="text-[18px] font-bold text-[#fff]">
                   SUBSCRIBE
                 </button>

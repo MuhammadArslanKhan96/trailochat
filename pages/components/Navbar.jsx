@@ -73,7 +73,7 @@ const Navbar = () => {
             </li>
             <Link
               href="/mindmap"
-              className="flex items-center gap-x-2 text-white text-[14px] px-8 bg-[#2B44FF] border rounded-[5px]"
+              className="flex items-center gap-x-2 border shadow-[0px_4px_4px_rgba(0,0,0,0.25)] border-[#FFF7F7] text-white text-[14px] px-8 bg-[#2B44FF]  rounded-[5px]"
             >
               <button className="  text-white font-bold text-[16px]   ">
                 Start For Free
