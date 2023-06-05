@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* START: out of box css*/
+html,
+body {
+  font-size: 12px;
+}
+#mmap-root {
+  background-color: #efefef;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+/* END: out of box css */
+
+[data-mind-wired-viewport] {
+  .mwd-body.level-0 {
+    border: 1px solid #777;
+    border-radius: 4px;
+    font-size: 1.5rem;
+  }
+  .mwd-body.level-1 {
+    border-radius: 4px;
+    font-size: 1.2rem;
+    background-color: #dff1ff;
+    color: #175a9b;
+  }
+  .mwd-body.level-2 {
+    font-size: 0.9rem;
+    background-color: #ffdff1;
+    color: #9b175a;
+  }
+}

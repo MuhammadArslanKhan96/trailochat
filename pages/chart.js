@@ -1,11 +1,60 @@
 import Image from "next/image";
 import React, { useState } from 'react';
+import { sampleString } from "@/data/data";
 import Header from './Header';
 import Search from './Search';
 import Side from './Side';
-
+import Mindmap from "./components/Mindmap";
 const Chart = () => {
+    const [data, setData] = useState(sampleString || '')
     const [open, setOpen] = useState(false);
+    const [load, setLoad] = useState(false)
+    const [topic, setTopic] = useState('');
+    const handleClick = async () => {
+        const res = await fetch(`/api/get-topic?topic=${topic}`);
+        const data = (await res.json());
+        const string = data.children.map((item, idx) => {
+            if (idx === 0) {
+                if (item.children.length) {
+                    const string = item.children.map((item2, idx) => {
+                        if (idx === 0) {
+                            return `- ${item.title}`
+                        }
+                        else {
+                            return (`
+    - ${item2.title}`)
+                        }
+                    })
+                    return `- ${item.title}
+    ${string}`
+                } else {
+                    return `- ${item.title}`
+                }
+            }
+            else {
+                if (item.children.length) {
+                    const string = item.children.map((item2, idx) => {
+                        if (idx === 0) {
+                            return `- ${item.title}`
+                        }
+                        else {
+                            return (`
+    - ${item2.title}`)
+                        }
+                    })
+                    return `- ${item.title}
+    ${string}`
+                } else {
+
+                    return (`
+                    - ${item.title}`)
+                }
+            }
+        })
+        console.log(string.toString().replace(',', ''), data.children)
+        setData(string.toString().replace(',', ''))
+        setLoad(true)
+    }
 
     return (
         <>
@@ -53,7 +102,7 @@ const Chart = () => {
                             </div>
 
                         </div>
-                        <div className='flex flex-col justify-center items-center  '>
+                        {/* <div className='flex flex-col justify-center items-center  '>
                             <div className='flex items-center gap-x-4 mb-6'>
                                 <div>
                                     <Image src="/images/Profile.svg" width={50} height={50} alt='' />
@@ -86,11 +135,12 @@ const Chart = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            </div> */}
 
                     </div>
+                    <Mindmap data={data} topic={topic} load={load} setLoad={setLoad} />
                     <div className='bg-white sticky bottom-0 w-full  right-20 z-10'>
-                        <Search />
+                        <Search topic={topic} load={load} setTopic={setTopic} handleClick={handleClick} />
                     </div>
                 </div>
             </div>
@@ -98,4 +148,4 @@ const Chart = () => {
     )
 }
 
-export default Chart
+export default Chart;
