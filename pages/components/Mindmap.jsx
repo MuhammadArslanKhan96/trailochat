@@ -46,7 +46,12 @@ export default function Mindmap({ topic, load, data, setLoad }) {
       <div
         id="jsmind_container"
         className="jsmind_container"
-        style={{ width: "100%", height: "500px" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          maxHeight: "720px",
+          overflow: "scroll",
+        }}
       ></div>
     </>
   );

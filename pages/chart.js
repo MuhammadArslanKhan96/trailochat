@@ -13,43 +13,26 @@ const Chart = () => {
     const handleClick = async () => {
         const res = await fetch(`/api/get-topic?topic=${topic}`);
         const data = (await res.json());
-        const string = data.children.map((item, idx) => {
-            if (idx === 0) {
-                if (item.children.length) {
-                    const string = item.children.map((item2, idx) => {
-                        if (idx === 0) {
-                            return `- ${item.title}`
-                        }
-                        else {
-                            return (`
-    - ${item2.title}`)
-                        }
-                    })
-                    return `- ${item.title}
-    ${string}`
-                } else {
-                    return `- ${item.title}`
-                }
-            }
-            else {
-                if (item.children.length) {
-                    const string = item.children.map((item2, idx) => {
-                        if (idx === 0) {
-                            return `- ${item.title}`
-                        }
-                        else {
-                            return (`
-    - ${item2.title}`)
-                        }
-                    })
-                    return `- ${item.title}
-    ${string}`
-                } else {
+        const string = data.children.map((item) => {
 
-                    return (`
-                    - ${item.title}`)
-                }
+            if (item.children.length) {
+                const string = item.children.map((item2, idx) => {
+                    if (idx === 0) {
+                        return `- ${item2.title}`
+                    }
+                    else {
+                        return (`
+    - ${item2.title}`)
+                    }
+                })
+                return `- ${item.title}
+    ${string.toString().replace(',', '')}
+`
+            } else {
+                return `- ${item.title}
+`
             }
+
         })
         console.log(string.toString().replace(',', ''), data.children)
         setData(string.toString().replace(',', ''))
@@ -139,7 +122,7 @@ const Chart = () => {
 
                     </div>
                     <Mindmap data={data} topic={topic} load={load} setLoad={setLoad} />
-                    <div className='bg-white sticky bottom-0 w-full  right-20 z-10'>
+                    <div className='bg-white fixed bottom-[15px] w-[80%]  right-20 z-10'>
                         <Search topic={topic} load={load} setTopic={setTopic} handleClick={handleClick} />
                     </div>
                 </div>
