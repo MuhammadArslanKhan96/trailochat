@@ -11,6 +11,7 @@ const Chart = () => {
     const [topic, setTopic] = useState('');
     const handleClick = async () => {
         setLoad(true)
+        setData('')
         const res = await fetch(`/api/get-topic?topic=${topic}`);
         const data = (await res.json());
         const string = data.children.map((item) => {
@@ -21,7 +22,7 @@ const Chart = () => {
                         return `- ${item2.title}`
                     }
                     else {
-                        return (`
+                        return (` 
     - ${item2.title}`)
                     }
                 })
@@ -122,8 +123,8 @@ const Chart = () => {
 
                     </div>
                     {
-                        data ?
-                            <Mindmap data={data} topic={topic} />
+                        data && !load ?
+                            <Mindmap data={data} topic={topic} load={load} />
                             : <div
                                 style={{
                                     width: "100%",
