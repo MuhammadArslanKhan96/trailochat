@@ -7,12 +7,11 @@
  */
 
 ; (function ($w) {
-    'use strict';
+    // 'use strict';
     // set 'jsMind' as the library name.
     // __name__ should be a const value, Never try to change it easily.
     var __name__ = 'jsMind';
     // library version
-    var __version__ = '0.4.9';
     // author
     var __author__ = 'hizzgdev@163.com';
 
@@ -97,7 +96,6 @@
     function jm(options) {
         jm.current = this;
 
-        this.version = __version__;
         var opts = {};
         jm.util.json.merge(opts, DEFAULT_OPTIONS);
         jm.util.json.merge(opts, options);
@@ -199,7 +197,6 @@
     jm.mind = function () {
         this.name = null;
         this.author = null;
-        this.version = null;
         this.root = null;
         this.selected = null;
         this.nodes = {};
@@ -448,7 +445,6 @@
                 "meta": {
                     "name": __name__,
                     "author": __author__,
-                    "version": __version__
                 },
                 "format": "node_tree",
                 "data": { "id": "root", "topic": "jsMind Example" }
@@ -458,7 +454,6 @@
                 var mind = new jm.mind();
                 mind.name = source.meta.name;
                 mind.author = source.meta.author;
-                mind.version = source.meta.version;
                 df._parse(mind, source.data);
                 return mind;
             },
@@ -468,7 +463,6 @@
                 json.meta = {
                     name: mind.name,
                     author: mind.author,
-                    version: mind.version
                 };
                 json.format = 'node_tree';
                 json.data = df._buildnode(mind.root);
@@ -547,7 +541,6 @@
                 "meta": {
                     "name": __name__,
                     "author": __author__,
-                    "version": __version__
                 },
                 "format": "node_array",
                 "data": [
@@ -560,7 +553,6 @@
                 var mind = new jm.mind();
                 mind.name = source.meta.name;
                 mind.author = source.meta.author;
-                mind.version = source.meta.version;
                 df._parse(mind, source.data);
                 return mind;
             },
@@ -571,7 +563,6 @@
                 json.meta = {
                     name: mind.name,
                     author: mind.author,
-                    version: mind.version
                 };
                 json.format = 'node_array';
                 json.data = [];
@@ -688,7 +679,6 @@
                 "meta": {
                     "name": __name__,
                     "author": __author__,
-                    "version": __version__
                 },
                 "format": "freemind",
                 "data": "<map version=\"1.0.1\"><node ID=\"root\" TEXT=\"freemind Example\"/></map>"
@@ -698,7 +688,6 @@
                 var mind = new jm.mind();
                 mind.name = source.meta.name;
                 mind.author = source.meta.author;
-                mind.version = source.meta.version;
                 var xml = source.data;
                 var xml_doc = df._parse_xml(xml);
                 var xml_root = df._find_root(xml_doc);
@@ -712,7 +701,6 @@
                 json.meta = {
                     name: mind.name,
                     author: mind.author,
-                    version: mind.version
                 };
                 json.format = 'freemind';
                 var xmllines = [];
@@ -1267,7 +1255,6 @@
             return {
                 name: this.mind.name,
                 author: this.mind.author,
-                version: this.mind.version
             };
         },
 

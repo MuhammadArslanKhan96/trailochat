@@ -23,7 +23,7 @@ const options = {
     hide_scrollbars_when_draggable: true,
   },
 };
-export default function ({ topic, load, data, setLoad }) {
+export default function Mindmap({ topic, load, data, setLoad }) {
   console.log("");
   const jm = useRef();
   console.log("");
@@ -38,6 +38,7 @@ export default function ({ topic, load, data, setLoad }) {
       });
       setLoad(false);
     }
+    // eslint-disable-next-line
   }, [load]);
 
   return (
