@@ -23,29 +23,24 @@ const options = {
     hide_scrollbars_when_draggable: true,
   },
 };
-export default function Mindmap({ topic, load, data, setLoad }) {
-  console.log("");
+export default function Mindmap({ topic, data }) {
   const jm = useRef();
-  console.log("");
   useEffect(() => {
-    console.log(load);
-    if (load) {
-      jm.current = null;
-      jm.current = new jsmind(options);
-      jm.current.show({
-        ...mind,
-        data: parse(data, topic),
-      });
-      setLoad(false);
-    }
+    jm.current = new jsmind(options);
+    jm.current.show({
+      ...mind,
+      data: parse(data, topic),
+    });
+
+    console.log(jm.current);
+
     // eslint-disable-next-line
-  }, [load]);
+  }, []);
 
   return (
     <>
       <div
         id="jsmind_container"
-        className="jsmind_container"
         style={{
           width: "100%",
           height: "100%",

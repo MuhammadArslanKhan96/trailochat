@@ -1,16 +1,16 @@
 import Image from "next/image";
 import React, { useState } from 'react';
-import { sampleString } from "@/data/data";
 import Header from './Header';
 import Search from './Search';
 import Side from './Side';
 import Mindmap from "./components/Mindmap";
 const Chart = () => {
-    const [data, setData] = useState(sampleString || '')
+    const [data, setData] = useState('')
     const [open, setOpen] = useState(false);
     const [load, setLoad] = useState(false)
     const [topic, setTopic] = useState('');
     const handleClick = async () => {
+        setLoad(true)
         const res = await fetch(`/api/get-topic?topic=${topic}`);
         const data = (await res.json());
         const string = data.children.map((item) => {
@@ -36,7 +36,7 @@ const Chart = () => {
         })
         console.log(string.toString().replace(',', ''), data.children)
         setData(string.toString().replace(',', ''))
-        setLoad(true)
+        setLoad(false)
     }
 
     return (
@@ -121,7 +121,21 @@ const Chart = () => {
                             </div> */}
 
                     </div>
-                    <Mindmap data={data} topic={topic} load={load} setLoad={setLoad} />
+                    {
+                        data ?
+                            <Mindmap data={data} topic={topic} />
+                            : <div
+                                style={{
+                                    width: "100%",
+                                    height: "70%",
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '2.4rem',
+                                    fontWeight: 'bold',
+                                    textTransform: 'uppercase'
+                                }}>{!load && !data ? 'Enter Topic In the Input 🤔' : 'Loading...'}</div>
+                    }
                     <div className='bg-white fixed bottom-[15px] w-[80%]  right-20 z-10'>
                         <Search topic={topic} load={load} setTopic={setTopic} handleClick={handleClick} />
                     </div>
