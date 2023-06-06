@@ -22,13 +22,13 @@ const Chart = () => {
                     const string = item.children.map((item2, idx) => {
                         if (idx === 0) {
                             return `- ${item2.title}
-    - ${item2.content}
+            - ${item2.content}
 `
                         }
                         else {
                             return (` 
-    - ${item2.title}
-    - ${item2.content}
+        - ${item2.title}
+            - ${item2.content}
 `)
                         }
                     })
