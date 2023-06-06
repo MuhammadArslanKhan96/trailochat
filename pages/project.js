@@ -4,16 +4,50 @@ import Header from './Header'
 import Side from './Side'
 import { MdEdit } from "react-icons/md";
 import Image from "next/image";
+import markdownMindmapToObjectArray from '../libs/convertMarkdownToArray';
 
 
 const Project = () => {
+    const [data, setData] = useState([])
     const [open, setOpen] = useState(false);
+    const [load, setLoad] = useState(false)
+    const [topic, setTopic] = useState('');
+    const handleClick = async () => {
+        if (topic !== '') {
+            setLoad(true)
+            setData('')
+            const res = await fetch(`/api/get-topic?topic=${topic}`);
+            const data = (await res.json());
+            const string = data.children.map((item) => {
+
+                if (item.children.length) {
+                    const string = item.children.map((item2) => {
+                        return `
+- ${item2.title.toString()}
+`
+                    });
+                    return `
+## ${item.title.toString()}
+${string.toString()}
+`
+                } else {
+                    return `
+## ${item.title.toString()}
+`
+                }
+
+            })
+            const int = markdownMindmapToObjectArray(string.toString().replace(',##', '##'));
+            setData(int)
+            setLoad(false)
+        }
+    }
 
     return (
         <>
             <div className='flex '>
                 <Side />
-                <div className='w-[80%] relative flex flex-col'>
+                <div className='w-[80%] overflow-hidden h-screen relative flex flex-col scrollStyle'>
                     <Header />
 
                     <div className='flex flex-col justify-between '>
@@ -57,215 +91,52 @@ const Project = () => {
                             </div>
 
                         </div>
-                        <div className='flex justify-center gap-x-7'>
-                            <div className='flex items-center  justify-center '>
-                                <div className='bg-[#DDDFE7] p-[16px] rounded-[4px]'>
-                                    <div className='text-[18px] py-[10px]'>TO DO </div>
-                                    <div className="flex flex-col gap-y-3">
-                                        <div className="p-[24px]  bg-white rounded-lg">
-                                            <div className="flex justify-between gap-x-40">
-                                                <div className="flex flex-col gap-y-[14px]">
-                                                    <div className='bg-[#46F7B7] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                        <p className="text-[10px] font-bold text-[#096343]">low priority</p> </div>
-                                                    <div > <p className="text-[14px] text-[#1B1C1D]">Lorem ipsum dolor sit amet, consectetur <br />
-                                                        adipiscing elit. Integer viverra venenatis <br />
-                                                        accumsan.</p> </div>
+                        <div className='flex justify-start ml-8 overflow-x-scroll gap-x-7 scrollStyle'>
+                            {data.length && !load ? data.map((column, idx) => (
+                                <div className='flex items-start justify-center ' key={idx}>
+                                    <div className='bg-[#DDDFE7] p-[16px] rounded-[4px]'>
+                                        <div className='text-[18px] py-[10px]'>{column.title}</div>
+                                        <div className="flex flex-col overflow-y-scroll scrollStyle max-h-[50vh] gap-y-3">
+                                            {column.children.length ? column.children.map((item, index) => (<div className="p-[24px]  bg-white rounded-lg" key={index}>
+                                                <div className="flex justify-between gap-x-40">
+                                                    <div className="flex flex-col gap-y-[14px]">
+                                                        <div className='bg-[#46F7B7] px-[8px] w-fit rounded-[2px] py-[2px]'>
+                                                            <p className="text-[10px] font-bold text-[#096343]">low priority</p> </div>
+                                                        <div > <p className="text-[14px] text-[#1B1C1D]">
+                                                            {item.title}
+                                                        </p> </div>
 
-                                                    <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                        <div>
-                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
+                                                        <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
+                                                            <div>
+                                                                <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
+                                                            </div>
+                                                            <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                         </div>
-                                                        <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
                                                     </div>
+
                                                 </div>
 
-                                            </div>
-
+                                            </div>)) : null}
                                         </div>
-                                        <div className="p-[24px]  bg-white rounded-lg">
-                                            <div className="flex justify-between gap-x-40">
-                                                <div className="flex flex-col gap-y-[14px]">
-                                                    <div className='bg-[#F5EB88] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                        <p className="text-[10px] font-bold text-[#653408]">medium priority</p> </div>
-                                                    <div > <p className="text-[14px] text-[#1B1C1D]">Lorem ipsum dolor sit amet, consectetur <br />
-                                                        adipiscing elit. Integer viverra venenatis <br />
-                                                        accumsan.</p> </div>
 
-                                                    <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                        <div>
-                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
-                                                        </div>
-                                                        <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div className="p-[24px]  bg-white rounded-lg">
-                                            <div className="flex justify-between gap-x-40">
-                                                <div className="flex flex-col gap-y-[14px]">
-                                                    <div className='bg-[#FFA775] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                        <p className="text-[10px] font-bold text-[#622808]">high priority</p> </div>
-                                                    <div > <p className="text-[14px] text-[#1B1C1D]">Lorem ipsum dolor sit amet, consectetur <br />
-                                                        adipiscing elit. Integer viverra venenatis <br />
-                                                        accumsan.</p> </div>
-
-                                                    <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                        <div>
-                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
-                                                        </div>
-                                                        <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
                                     </div>
-
                                 </div>
-                            </div>
-                            <div className='flex items-center  justify-center '>
-                                <div className='bg-[#DDDFE7] p-[16px] rounded-[4px]'>
-                                    <div className='text-[18px] py-[10px]'>In Progress </div>
-                                    <div className="flex flex-col gap-y-3">
-                                        <div className="p-[24px]  bg-white rounded-lg">
-                                            <div className="flex justify-between gap-x-40">
-                                                <div className="flex flex-col gap-y-[14px]">
-                                                    <div className='bg-[#46F7B7] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                        <p className="text-[10px] font-bold text-[#096343]">low priority</p> </div>
-                                                    <div > <p className="text-[14px] text-[#1B1C1D]">Lorem ipsum dolor sit amet, consectetur <br />
-                                                        adipiscing elit. Integer viverra venenatis <br />
-                                                        accumsan.</p> </div>
+                            )) : <div
+                                style={{
+                                    width: "100%",
+                                    height: "70%",
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '2.4rem',
+                                    fontWeight: 'bold',
+                                    textTransform: 'uppercase'
+                                }}>{!load && !data.length ? 'Enter Topic In the Input 🤔' : 'Loading...'}</div>}
 
-                                                    <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                        <div>
-                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
-                                                        </div>
-                                                        <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div className="p-[24px]  bg-white rounded-lg">
-                                            <div className="flex justify-between gap-x-40">
-                                                <div className="flex flex-col gap-y-[14px]">
-                                                    <div className='bg-[#F5EB88] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                        <p className="text-[10px] font-bold text-[#653408]">medium priority</p> </div>
-                                                    <div > <p className="text-[14px] text-[#1B1C1D]">Lorem ipsum dolor sit amet, consectetur <br />
-                                                        adipiscing elit. Integer viverra venenatis <br />
-                                                        accumsan.</p> </div>
-
-                                                    <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                        <div>
-                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
-                                                        </div>
-                                                        <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div className="p-[24px]  bg-white rounded-lg">
-                                            <div className="flex justify-between gap-x-40">
-                                                <div className="flex flex-col gap-y-[14px]">
-                                                    <div className='bg-[#FFA775] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                        <p className="text-[10px] font-bold text-[#622808]">high priority</p> </div>
-                                                    <div > <p className="text-[14px] text-[#1B1C1D]">Lorem ipsum dolor sit amet, consectetur <br />
-                                                        adipiscing elit. Integer viverra venenatis <br />
-                                                        accumsan.</p> </div>
-
-                                                    <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                        <div>
-                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
-                                                        </div>
-                                                        <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div className='flex items-center  justify-center '>
-                                <div className='bg-[#DDDFE7] p-[16px] rounded-[4px]'>
-                                    <div className='text-[18px] py-[10px]'>Completed</div>
-                                    <div className="flex flex-col gap-y-3">
-                                        <div className="p-[24px]  bg-white rounded-lg">
-                                            <div className="flex justify-between gap-x-40">
-                                                <div className="flex flex-col gap-y-[14px]">
-                                                    <div className='bg-[#46F7B7] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                        <p className="text-[10px] font-bold text-[#096343]">low priority</p> </div>
-                                                    <div > <p className="text-[14px] text-[#1B1C1D]">Lorem ipsum dolor sit amet, consectetur <br />
-                                                        adipiscing elit. Integer viverra venenatis <br />
-                                                        accumsan.</p> </div>
-
-                                                    <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                        <div>
-                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
-                                                        </div>
-                                                        <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div className="p-[24px]  bg-white rounded-lg">
-                                            <div className="flex justify-between gap-x-40">
-                                                <div className="flex flex-col gap-y-[14px]">
-                                                    <div className='bg-[#F5EB88] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                        <p className="text-[10px] font-bold text-[#653408]">medium priority</p> </div>
-                                                    <div > <p className="text-[14px] text-[#1B1C1D]">Lorem ipsum dolor sit amet, consectetur <br />
-                                                        adipiscing elit. Integer viverra venenatis <br />
-                                                        accumsan.</p> </div>
-
-                                                    <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                        <div>
-                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
-                                                        </div>
-                                                        <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div className="p-[24px]  bg-white rounded-lg">
-                                            <div className="flex justify-between gap-x-40">
-                                                <div className="flex flex-col gap-y-[14px]">
-                                                    <div className='bg-[#FFA775] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                        <p className="text-[10px] font-bold text-[#622808]">high priority</p> </div>
-                                                    <div > <p className="text-[14px] text-[#1B1C1D]">Lorem ipsum dolor sit amet, consectetur <br />
-                                                        adipiscing elit. Integer viverra venenatis <br />
-                                                        accumsan.</p> </div>
-
-                                                    <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                        <div>
-                                                            <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
-                                                        </div>
-                                                        <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
                         </div>
                     </div>
-                    <div className='bg-white sticky bottom-0 w-full  right-20 z-10'>
-                        <Search />
+                    <div className='bg-white fixed bottom-4 w-[80%]  right-20 z-10'>
+                        <Search topic={topic} load={load} setTopic={setTopic} handleClick={handleClick} />
                     </div>
                 </div>
             </div>

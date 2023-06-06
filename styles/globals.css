@@ -15,6 +15,9 @@ body {
 }
 /* END: out of box css */
 
+.scrollStyle::-webkit-scrollbar {
+  display: none;
+}
 [data-mind-wired-viewport] {
   .mwd-body.level-0 {
     border: 1px solid #777;

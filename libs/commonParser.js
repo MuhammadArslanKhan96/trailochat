@@ -126,9 +126,11 @@ export function parse(content, topic, matchMap = Status) {
         parentid: lastNode.id,
         topic: title, // .replace(title.charAt(0), title.charAt(0).toUpperCase()),
       };
-      nodes.push(node);
-      nodeStack.push(node);
-      lastNodeLevelStack.push(level);
+      if (!node.topic.includes('#')) {
+        nodes.push(node);
+        nodeStack.push(node);
+        lastNodeLevelStack.push(level);
+      }
     }
   });
   return nodes;

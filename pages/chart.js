@@ -3,46 +3,68 @@ import React, { useState } from 'react';
 import Header from './Header';
 import Search from './Search';
 import Side from './Side';
+import { sampleString } from "@/data/data";
 import Mindmap from "./components/Mindmap";
 const Chart = () => {
-    const [data, setData] = useState('')
+    const [data, setData] = useState(sampleString)
     const [open, setOpen] = useState(false);
     const [load, setLoad] = useState(false)
-    const [topic, setTopic] = useState('');
+    const [topic, setTopic] = useState('Full Stack Development');
     const handleClick = async () => {
-        setLoad(true)
-        setData('')
-        const res = await fetch(`/api/get-topic?topic=${topic}`);
-        const data = (await res.json());
-        const string = data.children.map((item) => {
+        if (topic !== '') {
+            setLoad(true)
+            setData('')
+            const res = await fetch(`/api/get-topic?topic=${topic}`);
+            const data = (await res.json());
+            const string = data.children.map((item) => {
 
-            if (item.children.length) {
-                const string = item.children.map((item2, idx) => {
-                    if (idx === 0) {
-                        return `- ${item2.title}`
-                    }
-                    else {
-                        return (` 
+                if (item.children.length) {
+                    const string = item.children.map((item2, idx) => {
+                        if (idx === 0) {
+                            return `- ${item2.title}`
+                        }
+                        else {
+                            return (` 
     - ${item2.title}`)
-                    }
-                })
-                return `- ${item.title}
+                        }
+                    })
+                    return `- ${item.title}
     ${string.toString().replace(',', '')}
 `
-            } else {
-                return `- ${item.title}
+                } else {
+                    return `- ${item.title}
 `
-            }
+                }
 
-        })
-        console.log(string.toString().replace(',', ''), data.children)
-        setData(string.toString().replace(',', ''))
-        setLoad(false)
+            })
+            setData(string.toString().replace(',', ''))
+            setLoad(false)
+        }
     }
 
+    const mind = {
+        version: 1,
+        meta: {
+            name: "demo",
+            author: "hizzgdev@163.com",
+            version: "0.2",
+        },
+        format: "node_array",
+        data: [],
+    };
+    const options = {
+        container: "jsmind_container",
+        theme: "clouds",
+        editable: true,
+        support_html: true,
+        view: {
+            draggable: false /* это для того чтоб если увеличить мап то его можно было переместить целиком */,
+            hide_scrollbars_when_draggable: true,
+        },
+    };
     return (
         <>
-            <div className='flex '>
+            <div className='flex'>
                 <Side />
                 <div className='w-[80%] relative flex flex-col'>
                     <Header />
@@ -86,7 +108,7 @@ const Chart = () => {
                             </div>
 
                         </div>
-                        {/* <div className='flex flex-col justify-center items-center  '>
+                        {/*<div className='flex flex-col justify-center items-center  '>
                             <div className='flex items-center gap-x-4 mb-6'>
                                 <div>
                                     <Image src="/images/Profile.svg" width={50} height={50} alt='' />
@@ -119,12 +141,12 @@ const Chart = () => {
                                     </div>
                                 </div>
                             </div>
-                            </div> */}
+                            </div>*/}
 
                     </div>
                     {
                         data && !load ?
-                            <Mindmap data={data} topic={topic} load={load} />
+                            <Mindmap options={options} showMap={true} mind={mind} data={data} topic={topic} />
                             : <div
                                 style={{
                                     width: "100%",
@@ -137,7 +159,7 @@ const Chart = () => {
                                     textTransform: 'uppercase'
                                 }}>{!load && !data ? 'Enter Topic In the Input 🤔' : 'Loading...'}</div>
                     }
-                    <div className='bg-white fixed bottom-[15px] w-[80%]  right-20 z-10'>
+                    <div className='bg-white  w-full mb-4  z-10'>
                         <Search topic={topic} load={load} setTopic={setTopic} handleClick={handleClick} />
                     </div>
                 </div>
