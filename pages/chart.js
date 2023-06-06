@@ -21,23 +21,30 @@ const Chart = () => {
                 if (item.children.length) {
                     const string = item.children.map((item2, idx) => {
                         if (idx === 0) {
-                            return `- ${item2.title}`
+                            return `- ${item2.title}
+    - ${item2.content}
+`
                         }
                         else {
                             return (` 
-    - ${item2.title}`)
+    - ${item2.title}
+    - ${item2.content}
+`)
                         }
                     })
                     return `- ${item.title}
-    ${string.toString().replace(',', '')}
+    - ${item.content}
+        ${string.toString().replace(',', '')}
 `
                 } else {
                     return `- ${item.title}
+    - ${item.content}
 `
                 }
 
             })
-            setData(string.toString().replace(',', ''))
+            const str = string.toString().replace(',', '')
+            setData(str.toString().replace(',-', '-'))
             setLoad(false)
         }
     }

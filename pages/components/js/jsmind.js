@@ -2282,7 +2282,7 @@
 
             this.graph = this.opts.engine.toLowerCase() === 'svg' ? new jm.graph_svg(this) : new jm.graph_canvas(this);
 
-            this.e_panel.className = 'jsmind-inner';
+            this.e_panel.className = 'jsmind-inner scrollStyle';
             this.e_panel.tabIndex = 1;
             this.e_panel.appendChild(this.graph.element());
             this.e_panel.appendChild(this.e_nodes);

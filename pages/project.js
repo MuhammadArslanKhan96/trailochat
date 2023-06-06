@@ -38,6 +38,7 @@ ${string.toString()}
 
             })
             const int = markdownMindmapToObjectArray(string.toString().replace(',##', '##'));
+            console.log(int)
             setData(int)
             setLoad(false)
         }
@@ -91,7 +92,7 @@ ${string.toString()}
                             </div>
 
                         </div>
-                        <div className='flex justify-start ml-8 overflow-x-scroll gap-x-7 scrollStyle'>
+                        <div className='flex justify-start h-[80vh] lg:ml-14 overflow-x-scroll gap-x-7 scrollStyle'>
                             {data.length && !load ? data.map((column, idx) => (
                                 <div className='flex items-start justify-center ' key={idx}>
                                     <div className='bg-[#DDDFE7] p-[16px] rounded-[4px]'>
@@ -116,7 +117,26 @@ ${string.toString()}
 
                                                 </div>
 
-                                            </div>)) : null}
+                                            </div>)) : <div className="px-[24px] py-2 bg-white rounded-lg">
+                                                <div className="flex justify-between gap-x-40">
+                                                    <div className="flex flex-col gap-y-[2px]">
+                                                        {/* <div className='bg-[#46F7B7] px-[8px] w-fit rounded-[2px] py-[2px]'>
+                                                            <p className="text-[10px] font-bold text-[#096343]">low priority</p> </div> */}
+                                                        <div > <p className="text-[14px] text-[#1B1C1D]">
+                                                            {column.title === 'Done' ? 'Nothing done yet!' : '+ Create a task'}
+                                                        </p> </div>
+
+                                                        {/* <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
+                                                            <div>
+                                                                <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
+                                                            </div>
+                                                            <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
+                                                        </div> */}
+                                                    </div>
+
+                                                </div>
+
+                                            </div>}
                                         </div>
 
                                     </div>
