@@ -24,9 +24,11 @@ const Chart = () => {
                     model: 'gpt-3.5-turbo',
                     messages: [{ role: 'user', content: `Create a mind map for ${topic} in markdown format` }],
                 });
-                const str = response.data.choices[0].message.content;
-                console.log(str)
-                setData(str)
+                const str = response.data.choices[0].message.content.replace('    - ', '        - ');
+                const str2 = str.replace('- ', '    - ');
+                const str3 = str2.replace('## ', '- ');
+                console.log(str3)
+                setData(str3)
                 setLoad(false)
             } catch (error) {
                 setLoad(false)
