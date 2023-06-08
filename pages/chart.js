@@ -3,49 +3,36 @@ import React, { useState } from 'react';
 import Header from './Header';
 import Search from './Search';
 import Side from './Side';
-import { sampleString } from "@/data/data";
+const { Configuration, OpenAIApi } = require('openai');
 import Mindmap from "./components/Mindmap";
 const Chart = () => {
-    const [data, setData] = useState(sampleString)
+    const [data, setData] = useState('')
     const [open, setOpen] = useState(false);
     const [load, setLoad] = useState(false)
-    const [topic, setTopic] = useState('Full Stack Development');
+    const [topic, setTopic] = useState('');
     const handleClick = async () => {
         if (topic !== '') {
-            setLoad(true)
-            setData('')
-            const res = await fetch(`/api/get-topic?topic=${topic}`);
-            const data = (await res.json());
-            const string = data.children.map((item) => {
+            try {
+                setLoad(true)
+                setData('');
+                const configuration = new Configuration({
+                    apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+                });
+                const openai = new OpenAIApi(configuration);
 
-                if (item.children.length) {
-                    const string = item.children.map((item2, idx) => {
-                        if (idx === 0) {
-                            return `- ${item2.title}
-            - ${item2.content}
-`
-                        }
-                        else {
-                            return (` 
-        - ${item2.title}
-            - ${item2.content}
-`)
-                        }
-                    })
-                    return `- ${item.title}
-    - ${item.content}
-        ${string.toString().replace(',', '')}
-`
-                } else {
-                    return `- ${item.title}
-    - ${item.content}
-`
-                }
+                const response = await openai.createChatCompletion({
+                    model: 'gpt-3.5-turbo',
+                    messages: [{ role: 'user', content: `Create a mind map for ${topic} in markdown format` }],
+                });
+                const str = response.data.choices[0].message.content;
+                console.log(str)
+                setData(str)
+                setLoad(false)
+            } catch (error) {
+                setLoad(false)
 
-            })
-            const str = string.toString().replace(',', '')
-            setData(str.toString().replace(',-', '-'))
-            setLoad(false)
+                console.log(error)
+            }
         }
     }
 

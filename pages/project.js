@@ -5,6 +5,7 @@ import Side from './Side'
 import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import markdownMindmapToObjectArray from '../libs/convertMarkdownToArray';
+import { Configuration, OpenAIApi } from 'openai';
 
 
 const Project = () => {
@@ -13,34 +14,30 @@ const Project = () => {
     const [load, setLoad] = useState(false)
     const [topic, setTopic] = useState('');
     const handleClick = async () => {
+
         if (topic !== '') {
-            setLoad(true)
-            setData('')
-            const res = await fetch(`/api/get-topic?topic=${topic}`);
-            const data = (await res.json());
-            const string = data.children.map((item) => {
+            try {
+                setLoad(true)
+                setData('');
+                const configuration = new Configuration({
+                    apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+                });
+                const openai = new OpenAIApi(configuration);
 
-                if (item.children.length) {
-                    const string = item.children.map((item2) => {
-                        return `
-- ${item2.title.toString()}
-`
-                    });
-                    return `
-## ${item.title.toString()}
-${string.toString()}
-`
-                } else {
-                    return `
-## ${item.title.toString()}
-`
-                }
+                const response = await openai.createChatCompletion({
+                    model: 'gpt-3.5-turbo',
+                    messages: [{ role: 'user', content: `Create a mind map for ${topic} in markdown format` }],
+                });
+                const str = response.data.choices[0].message.content;
+                console.log(str)
+                const int = markdownMindmapToObjectArray(str);
+                setData(int)
+                setLoad(false)
+            } catch (error) {
+                setLoad(false)
 
-            })
-            const int = markdownMindmapToObjectArray(string.toString().replace(',##', '##'));
-            console.log(int)
-            setData(int)
-            setLoad(false)
+                console.log(error)
+            }
         }
     }
 
