@@ -31,7 +31,6 @@ const Project = () => {
                 const str = response.data.choices[0].message.content;
 
                 const int = JSON.parse(str);
-                console.log(int)
                 setData(int)
                 setLoad(false)
             } catch (error) {
