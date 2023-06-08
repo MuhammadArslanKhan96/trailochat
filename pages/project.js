@@ -4,13 +4,12 @@ import Header from './Header'
 import Side from './Side'
 import { MdEdit } from "react-icons/md";
 import Image from "next/image";
-import markdownMindmapToObjectArray from '../libs/convertMarkdownToArray';
 import { Configuration, OpenAIApi } from 'openai';
 import Link from 'next/link';
 
 
 const Project = () => {
-    const [data, setData] = useState([])
+    const [data, setData] = useState()
     const [open, setOpen] = useState(false);
     const [load, setLoad] = useState(false)
     const [topic, setTopic] = useState('');
@@ -27,10 +26,12 @@ const Project = () => {
 
                 const response = await openai.createChatCompletion({
                     model: 'gpt-3.5-turbo',
-                    messages: [{ role: 'user', content: `Create a mind map for ${topic} in markdown format` }],
+                    messages: [{ role: 'user', content: `Create a mind map for ${topic} in json format with names: topic,subtopics` }],
                 });
                 const str = response.data.choices[0].message.content;
-                const int = markdownMindmapToObjectArray(str);
+
+                const int = JSON.parse(str);
+                console.log(int)
                 setData(int)
                 setLoad(false)
             } catch (error) {
@@ -88,18 +89,18 @@ const Project = () => {
 
                         </div>
                         <div className='flex justify-start h-[80vh] lg:ml-14 overflow-x-scroll gap-x-7 scrollStyle'>
-                            {data.length && !load ? data.map((column, idx) => (
+                            {data && !load ? data.subtopics.map((column, idx) => (
                                 <div className='flex items-start justify-center ' key={idx}>
                                     <div className='bg-[#DDDFE7] p-[16px] rounded-[4px]'>
-                                        <div className='text-[18px] py-[10px]'>{column.title}</div>
+                                        <div className='text-[18px] py-[10px]'>{column.topic || column.name || column}</div>
                                         <div className="flex flex-col overflow-y-scroll scrollStyle max-h-[50vh] gap-y-3">
-                                            {column.children.length ? column.children.map((item, index) => (<div className="p-[24px]  bg-white rounded-lg" key={index}>
+                                            {column.subtopics.length ? column.subtopics.map((item, index) => (<div className="p-[24px]  bg-white rounded-lg" key={index}>
                                                 <div className="flex justify-between gap-x-40">
                                                     <div className="flex flex-col gap-y-[14px]">
                                                         <div className='bg-[#46F7B7] px-[8px] w-fit rounded-[2px] py-[2px]'>
                                                             <p className="text-[10px] font-bold text-[#096343]">low priority</p> </div>
                                                         <div > <p className="text-[14px] text-[#1B1C1D]">
-                                                            {item.title}
+                                                            {item.topic || item.name || item}
                                                         </p> </div>
 
                                                         <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
@@ -146,7 +147,7 @@ const Project = () => {
                                     fontSize: '2.4rem',
                                     fontWeight: 'bold',
                                     textTransform: 'uppercase'
-                                }}>{!load && !data.length ? 'Enter Topic In the Input 🤔' : 'Loading...'}</div>}
+                                }}>{!load && !data ? 'Enter Topic In the Input 🤔' : 'Loading...'}</div>}
 
                         </div>
                     </div>
