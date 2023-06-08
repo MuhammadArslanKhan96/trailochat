@@ -22,13 +22,11 @@ const Chart = () => {
 
                 const response = await openai.createChatCompletion({
                     model: 'gpt-3.5-turbo',
-                    messages: [{ role: 'user', content: `Create a mind map for ${topic} in markdown format` }],
+                    messages: [{ role: 'user', content: `Create a mind map for ${topic} without hashtags in markdown format` }],
                 });
-                const str = response.data.choices[0].message.content.replace('    - ', '        - ');
-                const str2 = str.replace('- ', '    - ');
-                const str3 = str2.replace('## ', '- ');
-                console.log(str3)
-                setData(str3)
+                const str = response.data.choices[0].message.content;
+
+                setData(str)
                 setLoad(false)
             } catch (error) {
                 setLoad(false)

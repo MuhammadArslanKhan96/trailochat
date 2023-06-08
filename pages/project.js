@@ -26,7 +26,7 @@ const Project = () => {
 
                 const response = await openai.createChatCompletion({
                     model: 'gpt-3.5-turbo',
-                    messages: [{ role: 'user', content: `Create a mind map for ${topic} in markdown format` }],
+                    messages: [{ role: 'user', content: `Create a mind map for ${topic} without hashtags in markdown format` }],
                 });
                 const str = response.data.choices[0].message.content;
                 console.log(str)
