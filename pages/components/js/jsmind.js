@@ -1,12 +1,20 @@
-/**
- * @license BSD
- * @copyright 2014-2022 hizzgdev@163.com
- *
- * Project Home:
- *   https://github.com/hizzgdev/jsmind/
- */
+const { Configuration, OpenAIApi } = require("openai");
+const { parse } = require('../../../libs/commonParser')
 
-; (function ($w) {
+    /**
+     * @license BSD
+     * @copyright 2014-2022 hizzgdev@163.com
+     *
+     * Project Home:
+     *   https://github.com/hizzgdev/jsmind/
+     */
+
+    ;
+(function ($w) {
+    let markdown = [];
+    let setMarkdown = () => { };
+    let setShowMap = () => { };
+    let showMap = false;
     // 'use strict';
     // set 'jsMind' as the library name.
     // __name__ should be a const value, Never try to change it easily.
@@ -28,7 +36,26 @@
             return;
         }
     }
+    var handleClick = async (topic) => {
+        try {
+            const configuration = new Configuration({
+                apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+            });
+            const openai = new OpenAIApi(configuration);
 
+            const response = await openai.createChatCompletion({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "user",
+                        content: `Create a mind map for ${topic} without hashtags and numbers in markdown format with desc of each topic after adding colon`,
+                    },
+                ],
+            });
+            const str = response.data.choices[0].message.content;
+            return str;
+        } catch (error) { }
+    };
     // shortcut of methods in dom
     var $d = $w.document;
     var $g = function (id) { return $d.getElementById(id); };
@@ -79,7 +106,7 @@
             handles: {
             },
             mapping: {
-                addchild: 45, // Insert
+                addchild: 145, // Insert
                 addbrother: 13, // Enter
                 editnode: 113,// F2
                 delnode: 46, // Delete
@@ -1085,17 +1112,51 @@
             }
         },
 
-        click_handle: function (e) {
+        click_handle: async function (e) {
             if (!this.options.default_event_handle['enable_click_handle']) {
                 return;
             }
             var element = e.target || event.srcElement;
-            var isexpander = this.view.is_expander(element);
-            if (isexpander) {
+            var ischildadder = this.view.is_childadder(element);
+
+            if (ischildadder) {
+                
+                $t(element, 'Loading');
+                const root = this.get_root();
                 var nodeid = this.view.get_binded_nodeid(element);
-                if (!!nodeid) {
-                    this.toggle_node(nodeid);
-                }
+
+                let prompt = this.view.get_binded_nodetopic(element);
+                let parentid = nodeid;
+                const newString = await handleClick(prompt);
+                let generatedData = parse(newString, root.topic).filter(
+                    (i) => i.id !== "root"
+                );
+                let newData = generatedData.map((i) => {
+                    if (i.parentid === "root") {
+                        if (parentid === "root") {
+                            return {
+                                ...i,
+                                parentid: parentid,
+                                direction: markdown.filter((i) => i.direction === "left")
+                                    .length
+                                    ? "top"
+                                    : markdown.filter((i) => i.direction === "top").length
+                                        ? "bottom"
+                                        : "left",
+                            };
+                        } else {
+                            return {
+                                ...i,
+                                parentid: parentid,
+                            };
+                        }
+                    } else {
+                        return i;
+                    }
+                });
+                setShowMap(false)
+                setMarkdown([...markdown, ...newData])
+
             }
         },
 
@@ -1225,7 +1286,10 @@
 
         _show: function (mind) {
             var m = mind || jm.format.node_array.example;
-
+            markdown = mind.functions.markdown
+            showMap = mind.functions.showMap
+            setShowMap = mind.functions.setShowMap
+            setMarkdown = mind.functions.setMarkdown
             this.mind = this.data.load(m);
             if (!this.mind) {
                 logger.error('data.load error');
@@ -1967,7 +2031,19 @@
             return pout_cache;
         },
 
-        get_expander_point: function (node) {
+        // get_expander_point: function (node) {
+        //     var p = this.get_node_point_out(node);
+        //     var ex_p = {};
+        //     if (node._data.layout.direction == jm.direction.right) {
+        //         ex_p.x = p.x - this.opts.pspace;
+        //     } else {
+        //         ex_p.x = p.x;
+        //     }
+        //     ex_p.y = p.y - Math.ceil(this.opts.pspace / 2);
+        //     return ex_p;
+        // },
+
+        get_childadder_point: function (node) {
             var p = this.get_node_point_out(node);
             var ex_p = {};
             if (node._data.layout.direction == jm.direction.right) {
@@ -2160,7 +2236,6 @@
             ctx.strokeStyle = this.opts.line_color;
             ctx.lineWidth = this.opts.line_width;
             ctx.lineCap = 'round';
-
             this._bezier_to(ctx,
                 pin.x + offset.x,
                 pin.y + offset.y,
@@ -2324,15 +2399,32 @@
             if (tagName == 'jmnodes' || tagName == 'body' || tagName == 'html') {
                 return null;
             }
-            if (tagName == 'jmnode' || tagName == 'jmexpander') {
+            if (tagName == 'jmnode' || tagName == 'jmchildadder') {
                 return element.getAttribute('nodeid');
             } else {
                 return this.get_binded_nodeid(element.parentElement);
             }
         },
 
-        is_expander: function (element) {
-            return (element.tagName.toLowerCase() == 'jmexpander');
+        get_binded_nodetopic: function (element) {
+            if (element == null) {
+                return null;
+            }
+            var tagName = element.tagName.toLowerCase();
+            if (tagName == 'jmnodes' || tagName == 'body' || tagName == 'html') {
+                return null;
+            }
+            if (tagName == 'jmnode' || tagName == 'jmchildadder') {
+                return element.getAttribute('nodetopic');
+            } else {
+                return this.get_binded_nodetopic(element.parentElement);
+            }
+        },
+        // is_expander: function (element) {
+        //     return (element.tagName.toLowerCase() == 'jmexpander');
+        // },
+        is_childadder: function (element) {
+            return (element.tagName.toLowerCase() == 'jmchildadder');
         },
 
         reset: function () {
@@ -2412,12 +2504,19 @@
             if (node.isroot) {
                 d.className = 'root';
             } else {
-                var d_e = $c('jmexpander');
-                $t(d_e, '-');
-                d_e.setAttribute('nodeid', node.id);
-                d_e.style.visibility = 'hidden';
-                parent_node.appendChild(d_e);
-                view_data.expander = d_e;
+                // var d_e = $c('jmexpander');
+                // $t(d_e, '-');
+                // d_e.setAttribute('nodeid', node.id);
+                // d_e.style.visibility = 'hidden';
+                // parent_node.appendChild(d_e);
+                // view_data.expander = d_e;
+                var d_ca = $c('jmchildadder');
+                $t(d_ca, '-');
+                d_ca.setAttribute('nodeid', node.id);
+                d_ca.setAttribute('nodetopic', node.data.text);
+                d_ca.style.visibility = 'hidden';
+                parent_node.appendChild(d_ca);
+                view_data.childadder = d_ca;
             }
             if (!!node.topic) {
                 if (this.opts.support_html) {
@@ -2449,11 +2548,14 @@
             }
             if (node._data.view) {
                 var element = node._data.view.element;
-                var expander = node._data.view.expander;
+                // var expander = node._data.view.expander;
+                var childadder = node._data.view.childadder;
                 this.e_nodes.removeChild(element);
-                this.e_nodes.removeChild(expander);
+                // this.e_nodes.removeChild(expander);
+                this.e_nodes.removeChild(childadder);
                 node._data.view.element = null;
-                node._data.view.expander = null;
+                // node._data.view.expander = null;
+                node._data.view.childadder = null;
             }
         },
 
@@ -2638,7 +2740,8 @@
             for (var nodeid in nodes) {
                 node = nodes[nodeid];
                 node._data.view.element = null;
-                node._data.view.expander = null;
+                node._data.view.childadder = null;
+                // node._data.view.expander = null;
             }
             this.e_nodes.innerHTML = '';
         },
@@ -2647,20 +2750,24 @@
             var nodes = this.jm.mind.nodes;
             var node = null;
             var node_element = null;
-            var expander = null;
+            // var expander = null;
+            var childadder = null;
             var p = null;
-            var p_expander = null;
-            var expander_text = '-';
+            // let p_expander = null;
+            let p_childadder = null;
+            // var expander_text = '-';
+            var childadder_text = '-';
             var view_data = null;
             var _offset = this.get_view_offset();
             for (var nodeid in nodes) {
                 node = nodes[nodeid];
                 view_data = node._data.view;
                 node_element = view_data.element;
-                expander = view_data.expander;
+                // expander = view_data.expander;
+                childadder = view_data.childadder;
                 if (!this.layout.is_visible(node)) {
                     node_element.style.display = 'none';
-                    expander.style.display = 'none';
+                    // expander.style.display = 'none';
                     continue;
                 }
                 this.reset_node_custom_style(node);
@@ -2672,18 +2779,27 @@
                 node_element.style.display = '';
                 node_element.style.visibility = 'visible';
                 if (!node.isroot && node.children.length > 0) {
-                    expander_text = node.expanded ? '-' : '+';
-                    p_expander = this.layout.get_expander_point(node);
-                    expander.style.left = (_offset.x + p_expander.x) + 'px';
-                    expander.style.top = (_offset.y + p_expander.y) + 'px';
-                    expander.style.display = '';
-                    expander.style.visibility = 'visible';
-                    $t(expander, expander_text);
+                    // expander_text = node.expanded ? '-' : '+';
+                    // p_expander = this.layout.get_expander_point(node);
+                    // expander.style.left = Number(node_element.style.left.split('px')[0])+3 + node_element.offsetWidth+'px';
+                    // expander.style.top = Number(node_element.style.top.split('px')[0]) + (node_element.offsetHeight/2)-2 + 'px';
+                    // expander.style.display = '';
+                    // expander.style.visibility = 'visible';
+                    // $t(expander, expander_text);
+                    childadder.style.display = 'none';
+                    childadder.style.visibility = 'hidden';
                 }
                 // hide expander while all children have been removed
                 if (!node.isroot && node.children.length == 0) {
-                    expander.style.display = 'none';
-                    expander.style.visibility = 'hidden';
+                    childadder.style.display = 'none';
+                    childadder.style.visibility = 'hidden';
+                    childadder_text = '+';
+                    p_childadder = this.layout.get_childadder_point(node);
+                    childadder.style.left = Number(node_element.style.left.split('px')[0]) + 3 + node_element.offsetWidth + 'px';
+                    childadder.style.top = Number(node_element.style.top.split('px')[0]) + (node_element.offsetHeight / 2) - 8 + 'px';
+                    childadder.style.display = '';
+                    childadder.style.visibility = 'visible';
+                    $t(childadder, childadder_text);
                 }
             }
         },

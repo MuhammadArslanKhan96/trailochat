@@ -23,7 +23,7 @@ const Chart = () => {
 
                 const response = await openai.createChatCompletion({
                     model: 'gpt-3.5-turbo',
-                    messages: [{ role: 'user', content: `Create a mind map for ${topic} without hashtags in markdown format` }],
+                    messages: [{ role: 'user', content: `Create a mind map for ${topic} without hashtags in markdown format with desc of each topic after adding colon` }],
                 });
                 const str = response.data.choices[0].message.content;
 
@@ -32,7 +32,6 @@ const Chart = () => {
             } catch (error) {
                 setLoad(false)
 
-                console.log(error)
             }
         }
     }
@@ -50,7 +49,7 @@ const Chart = () => {
     const options = {
         container: "jsmind_container",
         theme: "clouds",
-        editable: true,
+        editable: false,
         support_html: true,
         view: {
             draggable: false /* это для того чтоб если увеличить мап то его можно было переместить целиком */,
@@ -137,6 +136,7 @@ const Chart = () => {
                             </div>*/}
 
                     </div>
+
                     {
                         data && !load ?
                             <Mindmap options={options} showMap={true} mind={mind} data={data} topic={topic} />

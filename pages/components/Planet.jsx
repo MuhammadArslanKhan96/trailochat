@@ -51,7 +51,7 @@ const Planet = () => {
           </div>
         </div>
       </div>
-      <hr class="mt-12 h-0.5 border-t-0 bg-[#000000B2] opacity-100 dark:opacity-50" />
+      <hr className="mt-12 h-0.5 border-t-0 bg-[#000000B2] opacity-100 dark:opacity-50" />
     </>
   );
 };

@@ -32,7 +32,7 @@ const Envision = () => {
             </button>
           </div>
         </div>
-        <div class=" h-auto min-h-[1em] w-0.5 ml-20 bg-[#000000] opacity-100 dark:opacity-50"></div>
+        <div className=" h-auto min-h-[1em] w-0.5 ml-20 bg-[#000000] opacity-100 dark:opacity-50"></div>
         <div className="flex flex-col justify-center pl-20 py-[55px]">
           <div className="flex flex-col gap-y-10">
             <div className="flex  gap-x-5">

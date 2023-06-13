@@ -36,7 +36,6 @@ const Project = () => {
             } catch (error) {
                 setLoad(false)
 
-                console.log(error)
             }
         }
     }

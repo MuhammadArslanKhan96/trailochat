@@ -41,14 +41,6 @@ const Status = {
 };
 // "·": 0
 
-// const preProcessContent = (text) => {
-//   var inputArray = text.split("\n");
-//   var filteredArray = inputArray.filter(function (rowString) {
-//     console.log(rowString);
-//     return rowString;
-//   });
-//   return filteredArray.join("\n");
-// };
 /**
  *
  * @param {string} content
@@ -69,6 +61,7 @@ export function parse(content, topic, matchMap = Status) {
   let filterArr = Object.keys(matchMap);
   let root = {
     id: "root",
+    text: topic,
     topic: topic,
     isroot: true,
   };
@@ -77,15 +70,7 @@ export function parse(content, topic, matchMap = Status) {
   nodeStack.push(root);
   lastNodeLevelStack.push("root");
   content.split("\n").forEach((line) => {
-    // console.log(line);
-    // console.log(
-    //   // "nodes",
-    //   // nodes,
-    //   // "nodeStack",
-    //   // nodeStack,
-    //   "lastNodeLevelStack",
-    //   lastNodeLevelStack
-    // );
+  
     //match the first non-numeric and non-letter character
     let index = line.search(filterArr);
     let firstLetterIndex = line.search(/[^\w\s]/);
@@ -122,9 +107,10 @@ export function parse(content, topic, matchMap = Status) {
 
       //saving the node
       let node = {
-        id: title.toLowerCase() + "_" + uuidv4(),
+        id: title.split(':')[0].toLowerCase() + "_" + uuidv4(),
         parentid: lastNode.id,
-        topic: title, // .replace(title.charAt(0), title.charAt(0).toUpperCase()),
+        text: title.split(':')[0],
+        topic: title.split(':').length > 1 ? `<div style="pointer-events:none;font-weight:bold;width:100%;">${title.split(':')[0]}</div><div style="pointer-events:none;width:100%;">${title.split(':')[1]}</div>` : title.split(':')[0], // .replace(title.charAt(0), title.charAt(0).toUpperCase()),
       };
       if (!node.topic.includes('#')) {
         nodes.push(node);
