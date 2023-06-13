@@ -1,7 +1,7 @@
-import DataContext from "@/pages/components/js/Context";
+import { DataContext } from "@/pages/_app";
 import React from "react";
 
-const UseMarkdown = ({children}) => {
+const UseMarkdown = ({ children }) => {
   const [markdown, setMarkdown] = React.useState([]);
   const [showMap, setShowMap] = React.useState(false);
   return (

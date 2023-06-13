@@ -2,17 +2,19 @@ import React, { useEffect, useRef } from "react";
 import { parse } from "@/libs/commonParser";
 import jsmind from "./js/jsmind";
 import { useContext } from "react";
-import DataContext from "./js/Context";
+import {DataContext} from "../_app";
 export default function Mindmap({ options, mind, data, topic }) {
   const { showMap, markdown, setMarkdown, setShowMap } =
     useContext(DataContext);
   const jm = useRef();
   useEffect(() => {
     setMarkdown(parse(data, topic));
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     setShowMap(true);
+    // eslint-disable-next-line
   }, [markdown]);
 
   useEffect(() => {
@@ -24,6 +26,7 @@ export default function Mindmap({ options, mind, data, topic }) {
         functions:{showMap,markdown,setMarkdown,setShowMap}
       });
     }
+    // eslint-disable-next-line
   }, [showMap]);
   return (
     <>
