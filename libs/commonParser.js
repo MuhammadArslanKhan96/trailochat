@@ -47,7 +47,7 @@ const Status = {
  * @param {object} matchMap a match map to tell the function how to classify and match the content
  * @returns {Array}
  */
-export function parse(content, topic, matchMap = Status) {
+export function parse(content, topic, more, matchMap = Status) {
   //content = preProcessContent(content);
 
   if (typeof matchMap !== "object") {
@@ -64,13 +64,14 @@ export function parse(content, topic, matchMap = Status) {
     text: topic,
     topic: topic,
     isroot: true,
+    more
   };
   //set a initial root node
   nodes.push(root);
   nodeStack.push(root);
   lastNodeLevelStack.push("root");
   content.split("\n").forEach((line) => {
-  
+
     //match the first non-numeric and non-letter character
     let index = line.search(filterArr);
     let firstLetterIndex = line.search(/[^\w\s]/);
@@ -110,7 +111,8 @@ export function parse(content, topic, matchMap = Status) {
         id: title.split(':')[0].toLowerCase() + "_" + uuidv4(),
         parentid: lastNode.id,
         text: title.split(':')[0],
-        topic: title.split(':').length > 1 ? `<div style="pointer-events:none;font-weight:bold;width:100%;">${title.split(':')[0]}</div><div style="pointer-events:none;width:100%;">${title.split(':')[1]}</div>` : title.split(':')[0], // .replace(title.charAt(0), title.charAt(0).toUpperCase()),
+        left: false,
+        topic: title.split(':').length > 1 ? `<div style="pointer-events:none;font-weight:bold;width:100%;">${title.split(':')[0]}</div><div style="pointer-events:none;width:100%;">${title.split(':')[1]}</div>`.replace('*','') : title.split(':')[0].replace('*',''), // .replace(title.charAt(0), title.charAt(0).toUpperCase()),
       };
       if (!node.topic.includes('#')) {
         nodes.push(node);

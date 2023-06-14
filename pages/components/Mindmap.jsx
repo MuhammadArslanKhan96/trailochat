@@ -8,7 +8,7 @@ export default function Mindmap({ options, mind, data, topic }) {
     useContext(DataContext);
   const jm = useRef();
   useEffect(() => {
-    setMarkdown(parse(data, topic));
+    setMarkdown(parse(data, topic, true));
     // eslint-disable-next-line
   }, []);
 

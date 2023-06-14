@@ -64,6 +64,7 @@ export function parse(content) {
             let rootNode = {
               id: "root",
               topic: line.slice(2),
+              more: true,
               isroot: true,
             };
             lastLevel = 1;
@@ -75,6 +76,7 @@ export function parse(content) {
             if (nodes.length === 0) {
               let defaultRoot = {
                 id: "root",
+              more: true,
                 topic: "",
                 isroot: true,
               };
@@ -112,6 +114,7 @@ export function parse(content) {
             if (nodes.length === 0) {
               let defaultRoot = {
                 id: "root",
+                more: true,
                 topic: "",
                 isroot: true,
               };

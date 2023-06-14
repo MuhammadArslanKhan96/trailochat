@@ -150,7 +150,7 @@ const { parse } = require('../../../libs/commonParser')
         this.id = sId;
         this.index = iIndex;
         this.topic = sTopic;
-        this.data = oData || {};
+                  this.data = oData || {};
         this.isroot = bIsRoot;
         this.parent = oParent;
         this.direction = eDirection;
@@ -256,7 +256,7 @@ const { parse } = require('../../../libs/commonParser')
                 return null;
             }
             var node_index = idx || -1;
-            var node = new jm.node(nodeid, node_index, topic, data, false, parent_node, parent_node.direction, expanded);
+            var node = new jm.node(nodeid, node_index, topic, data, false, parent_node, parent_node.direction, expanded,false);
             if (parent_node.isroot) {
                 node.direction = direction || jm.direction.right;
             }
@@ -1120,17 +1120,18 @@ const { parse } = require('../../../libs/commonParser')
             var ischildadder = this.view.is_childadder(element);
 
             if (ischildadder) {
-                
+
                 $t(element, 'Loading');
+                element.className += 'loading'
+                element.disabled = true
+
                 const root = this.get_root();
                 var nodeid = this.view.get_binded_nodeid(element);
-
+                if (nodeid === 'root') element.style.left = (Number(element.style.left.split('px')[0]) - 50) + 'px'
                 let prompt = this.view.get_binded_nodetopic(element);
                 let parentid = nodeid;
                 const newString = await handleClick(prompt);
-                let generatedData = parse(newString, root.topic).filter(
-                    (i) => i.id !== "root"
-                );
+                let generatedData = parse(newString, root.topic, !Number(element.style.left.split('px')[0]) < 313);
                 let newData = generatedData.map((i) => {
                     if (i.parentid === "root") {
                         if (parentid === "root") {
@@ -1143,19 +1144,26 @@ const { parse } = require('../../../libs/commonParser')
                                     : markdown.filter((i) => i.direction === "top").length
                                         ? "bottom"
                                         : "left",
+                                        left:Number(element.style.left.split('px')[0]) < 313
                             };
                         } else {
                             return {
                                 ...i,
                                 parentid: parentid,
+                                left:Number(element.style.left.split('px')[0]) < 313
                             };
                         }
                     } else {
-                        return i;
+                        return {...i,
+                        left:Number(element.style.left.split('px')[0]) < 313};
                     }
                 });
                 setShowMap(false)
-                setMarkdown([...markdown, ...newData])
+                let d = [...markdown.filter(
+                    (i) => i.id !== "root"
+                ), ...newData.map(i => ({...i,distance:'left'}))];
+
+                setMarkdown([...d.filter(i => !i.isroot), { ...d.filter(i => i.isroot)[0], more: !Number(element.style.left.split('px')[0]) < 313 }])
 
             }
         },
@@ -2503,6 +2511,13 @@ const { parse } = require('../../../libs/commonParser')
             var d = $c('jmnode');
             if (node.isroot) {
                 d.className = 'root';
+                var d_ca = $c('jmchildadder');
+                $t(d_ca, '-');
+                d_ca.setAttribute('nodeid', node.id);
+                d_ca.setAttribute('nodetopic', node.data.text);
+                d_ca.style.visibility = 'hidden';
+                parent_node.appendChild(d_ca);
+                view_data.childadder = d_ca;
             } else {
                 // var d_e = $c('jmexpander');
                 // $t(d_e, '-');
@@ -2778,6 +2793,15 @@ const { parse } = require('../../../libs/commonParser')
                 node_element.style.top = (_offset.y + p.y) + 'px';
                 node_element.style.display = '';
                 node_element.style.visibility = 'visible';
+                if (node.isroot && node.data.more) {
+                    childadder_text = '+';
+                    p_childadder = this.layout.get_childadder_point(node);
+                    childadder.style.left = (Number(node_element.style.left.split('px')[0]) - 25) + 'px';
+                    childadder.style.top = Number(node_element.style.top.split('px')[0]) + (node_element.offsetHeight / 2) - 8 + 'px';
+                    childadder.style.display = '';
+                    childadder.style.visibility = 'visible';
+                    $t(childadder, childadder_text);
+                }
                 if (!node.isroot && node.children.length > 0) {
                     // expander_text = node.expanded ? '-' : '+';
                     // p_expander = this.layout.get_expander_point(node);
@@ -2795,7 +2819,7 @@ const { parse } = require('../../../libs/commonParser')
                     childadder.style.visibility = 'hidden';
                     childadder_text = '+';
                     p_childadder = this.layout.get_childadder_point(node);
-                    childadder.style.left = Number(node_element.style.left.split('px')[0]) + 3 + node_element.offsetWidth + 'px';
+                    childadder.style.left = node.data.left ? (Number(node_element.style.left.split('px')[0]) - 21) + 'px': Number(node_element.style.left.split('px')[0]) + 3 + node_element.offsetWidth + 'px';
                     childadder.style.top = Number(node_element.style.top.split('px')[0]) + (node_element.offsetHeight / 2) - 8 + 'px';
                     childadder.style.display = '';
                     childadder.style.visibility = 'visible';
