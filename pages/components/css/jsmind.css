@@ -64,7 +64,7 @@ jmchildadder {
   justify-content: center; */
   overflow: hidden;
   line-height: 10px;
-  padding: 1px 1px 4px;
+  padding: 1px 2px 4px 2px;
   /* padding-top: 2px; */
   font-size: 17px;
   text-align: center;
@@ -76,21 +76,21 @@ jmchildadder {
 /* default theme */
 jmnode {
   padding: 10px;
-  background-color: #fff;
+  background-color: rgb(139, 3, 139);
   color: #333;
   border-radius: 5px;
   box-shadow: 1px 1px 1px #666;
-  font: 16px/1.125 Verdana, Arial, Helvetica, sans-serif;
-  max-width: min-content;
+  font: 12px/1.125 Verdana, Arial, Helvetica, sans-serif;
+  max-width: 184px;
   /* height: fit-content; */
-  display: block;
-  /* align-items: center; */
-  /* flex-direction: column;
-  gap: 8px; */
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
 }
 jmnode:hover {
   box-shadow: 2px 2px 8px #000;
-  background-color: #ebebeb;
+  background-color: purple;
   color: #333;
 }
 jmnode input:focus {
@@ -111,6 +111,7 @@ jmexpander:hover {
 } */
 jmchildadder {
   border-color: gray;
+  background-color: rgb(230, 229, 229);
 }
 jmchildadder:hover {
   border-color: #000;
@@ -119,15 +120,25 @@ jmchildadder:hover {
   jmnode {
     padding: 5px;
     border-radius: 3px;
-    font-size: 14px;
+    font-size: 10px;
   }
   jmnode.root {
-    font-size: 21px;
+    font-size: 17px;
   }
 }
 .loading {
-  border: none;
   cursor: not-allowed;
+  background-color: rgb(128, 128, 255);
+  color: white;
+}
+.jmselect{
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap:5px;
+  position: absolute;
+  width: 350px;
+  z-index: 10;
 }
 /* primary theme */
 jmnodes.theme-primary jmnode {
@@ -305,15 +316,17 @@ jmnodes.theme-pomegranate jmnode.selected {
   color: #fff;
 }
 /* clouds theme */
-jmnodes.theme-clouds jmnode {
-  background-color: #ecf0f1;
-  color: #333;
+jmnodes.theme-clouds jmnode.root {
+  background-color: #4D2ECD;
+  color: #fff;
 }
-jmnodes.theme-clouds jmnode:hover {
-  background-color: #bdc3c7;
+
+jmnodes.theme-clouds jmnode {
+  background-color: #321088;
+  color: #fff;
 }
 jmnodes.theme-clouds jmnode.selected {
-  background-color: #11f;
+  background-color: #5920e9;
   color: #fff;
 }
 

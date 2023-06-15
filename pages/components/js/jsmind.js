@@ -1,62 +1,24 @@
-const { Configuration, OpenAIApi } = require("openai");
-const { parse } = require('../../../libs/commonParser')
-
-    /**
-     * @license BSD
-     * @copyright 2014-2022 hizzgdev@163.com
-     *
-     * Project Home:
-     *   https://github.com/hizzgdev/jsmind/
-     */
-
-    ;
-(function ($w) {
+; (function ($w) {
+    'use strict';
+    var __name__ = 'jsMind';
+    var __author__ = 'hizzgdev@163.com';
     let markdown = [];
     let setMarkdown = () => { };
     let setShowMap = () => { };
-    let showMap = false;
-    // 'use strict';
-    // set 'jsMind' as the library name.
-    // __name__ should be a const value, Never try to change it easily.
-    var __name__ = 'jsMind';
-    // library version
-    // author
-    var __author__ = 'hizzgdev@163.com';
+    let setSelect = () => { };
 
-    // an noop function define
     var _noop = function () { };
     var logger = (typeof console === 'undefined') ? {
         log: _noop, debug: _noop, error: _noop, warn: _noop, info: _noop
     } : console;
 
-    // check global variables
     if (typeof module === 'undefined' || !module.exports) {
         if (typeof $w[__name__] != 'undefined') {
             logger.log(__name__ + ' has been already exist.');
             return;
         }
     }
-    var handleClick = async (topic) => {
-        try {
-            const configuration = new Configuration({
-                apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-            });
-            const openai = new OpenAIApi(configuration);
 
-            const response = await openai.createChatCompletion({
-                model: "gpt-3.5-turbo",
-                messages: [
-                    {
-                        role: "user",
-                        content: `Create a mind map for ${topic} without hashtags and numbers in markdown format with desc of each topic after adding colon`,
-                    },
-                ],
-            });
-            const str = response.data.choices[0].message.content;
-            return str;
-        } catch (error) { }
-    };
-    // shortcut of methods in dom
     var $d = $w.document;
     var $g = function (id) { return $d.getElementById(id); };
     var $c = function (tag) { return $d.createElement(tag); };
@@ -70,7 +32,6 @@ const { parse } = require('../../../libs/commonParser')
             n.innerHTML = t;
         }
     };
-    // detect isElement
     var $i = function (el) { return !!el && (typeof el === 'object') && (el.nodeType === 1) && (typeof el.style === 'object') && (typeof el.ownerDocument === 'object'); };
     if (typeof String.prototype.startsWith != 'function') { String.prototype.startsWith = function (p) { return this.slice(0, p.length) === p; }; }
 
@@ -88,12 +49,14 @@ const { parse } = require('../../../libs/commonParser')
             line_width: 2,
             line_color: '#555',
             draggable: false, // drag the mind map with your mouse, when it's larger that the container
-            hide_scrollbars_when_draggable: false // hide container scrollbars, when mind map is larger than container and draggable option is true.
+            hide_scrollbars_when_draggable: false, // hide container scrollbars, when mind map is larger than container and draggable option is true.
+            node_overflow: 'hidden' // hidden or wrap
         },
         layout: {
             hspace: 30,
             vspace: 20,
-            pspace: 13
+            pspace: 13,
+            cousin_space: 0
         },
         default_event_handle: {
             enable_mousedown_handle: true,
@@ -106,7 +69,7 @@ const { parse } = require('../../../libs/commonParser')
             handles: {
             },
             mapping: {
-                addchild: 145, // Insert
+                addchild: [45, 4096 + 13], // Insert, Ctrl+Enter
                 addbrother: 13, // Enter
                 editnode: 113,// F2
                 delnode: 46, // Delete
@@ -119,8 +82,7 @@ const { parse } = require('../../../libs/commonParser')
         },
     };
 
-    // core object
-    function jm(options) {
+    var jm = function (options) {
         jm.current = this;
 
         var opts = {};
@@ -138,8 +100,31 @@ const { parse } = require('../../../libs/commonParser')
         this.init();
     };
 
-    // ============= static object =============================================
-    jm.direction = { left: -1, center: 0, right: 1 };
+    if (!jm) { return; }
+    if (typeof jm.draggable != 'undefined') { return; }
+
+
+
+
+    jm.direction = {
+        left: -1, center: 0, right: 1, of: function (dir) {
+            if (!dir || dir === -1 || dir === 0 || dir === 1) {
+                return dir;
+            }
+            if (dir === '-1' || dir === '0' || dir === '1') {
+                return parseInt(dir);
+            }
+            if (dir.toLowerCase() === 'left') {
+                return this.left;
+            }
+            if (dir.toLowerCase() === 'right') {
+                return this.right;
+            }
+            if (dir.toLowerCase() === 'center') {
+                return this.center;
+            }
+        }
+    };
     jm.event_type = { show: 1, resize: 2, edit: 3, select: 4 };
     jm.key = { meta: 1 << 13, ctrl: 1 << 12, alt: 1 << 11, shift: 1 << 10 };
 
@@ -150,7 +135,7 @@ const { parse } = require('../../../libs/commonParser')
         this.id = sId;
         this.index = iIndex;
         this.topic = sTopic;
-                  this.data = oData || {};
+        this.data = oData || {};
         this.isroot = bIsRoot;
         this.parent = oParent;
         this.direction = eDirection;
@@ -224,6 +209,7 @@ const { parse } = require('../../../libs/commonParser')
     jm.mind = function () {
         this.name = null;
         this.author = null;
+        this.version = null;
         this.root = null;
         this.selected = null;
         this.nodes = {};
@@ -256,7 +242,7 @@ const { parse } = require('../../../libs/commonParser')
                 return null;
             }
             var node_index = idx || -1;
-            var node = new jm.node(nodeid, node_index, topic, data, false, parent_node, parent_node.direction, expanded,false);
+            var node = new jm.node(nodeid, node_index, topic, data, false, parent_node, parent_node.direction, expanded);
             if (parent_node.isroot) {
                 node.direction = direction || jm.direction.right;
             }
@@ -481,6 +467,7 @@ const { parse } = require('../../../libs/commonParser')
                 var mind = new jm.mind();
                 mind.name = source.meta.name;
                 mind.author = source.meta.author;
+                mind.version = source.meta.version;
                 df._parse(mind, source.data);
                 return mind;
             },
@@ -490,6 +477,7 @@ const { parse } = require('../../../libs/commonParser')
                 json.meta = {
                     name: mind.name,
                     author: mind.author,
+                    version: mind.version
                 };
                 json.format = 'node_tree';
                 json.data = df._buildnode(mind.root);
@@ -580,6 +568,7 @@ const { parse } = require('../../../libs/commonParser')
                 var mind = new jm.mind();
                 mind.name = source.meta.name;
                 mind.author = source.meta.author;
+                mind.version = source.meta.version;
                 df._parse(mind, source.data);
                 return mind;
             },
@@ -590,6 +579,7 @@ const { parse } = require('../../../libs/commonParser')
                 json.meta = {
                     name: mind.name,
                     author: mind.author,
+                    version: mind.version
                 };
                 json.format = 'node_array';
                 json.data = [];
@@ -715,6 +705,7 @@ const { parse } = require('../../../libs/commonParser')
                 var mind = new jm.mind();
                 mind.name = source.meta.name;
                 mind.author = source.meta.author;
+                mind.version = source.meta.version;
                 var xml = source.data;
                 var xml_doc = df._parse_xml(xml);
                 var xml_root = df._find_root(xml_doc);
@@ -728,6 +719,7 @@ const { parse } = require('../../../libs/commonParser')
                 json.meta = {
                     name: mind.name,
                     author: mind.author,
+                    version: mind.version
                 };
                 json.format = 'freemind';
                 var xmllines = [];
@@ -1029,7 +1021,8 @@ const { parse } = require('../../../libs/commonParser')
                 mode: opts.mode,
                 hspace: opts.layout.hspace,
                 vspace: opts.layout.vspace,
-                pspace: opts.layout.pspace
+                pspace: opts.layout.pspace,
+                cousin_space: opts.layout.cousin_space
             }
             var opts_view = {
                 container: opts.container,
@@ -1040,7 +1033,8 @@ const { parse } = require('../../../libs/commonParser')
                 line_width: opts.view.line_width,
                 line_color: opts.view.line_color,
                 draggable: opts.view.draggable,
-                hide_scrollbars_when_draggable: opts.view.hide_scrollbars_when_draggable
+                hide_scrollbars_when_draggable: opts.view.hide_scrollbars_when_draggable,
+                node_overflow: opts.view.node_overflow
             };
             // create instance of function provider
             this.data = new jm.data_provider(this);
@@ -1104,7 +1098,7 @@ const { parse } = require('../../../libs/commonParser')
             var element = e.target || event.srcElement;
             var nodeid = this.view.get_binded_nodeid(element);
             if (!!nodeid) {
-                if (element.tagName.toLowerCase() == 'jmnode') {
+                if (this.view.is_node(element)) {
                     this.select_node(nodeid);
                 }
             } else {
@@ -1112,59 +1106,20 @@ const { parse } = require('../../../libs/commonParser')
             }
         },
 
-        click_handle: async function (e) {
+        click_handle: function (e) {
             if (!this.options.default_event_handle['enable_click_handle']) {
                 return;
             }
             var element = e.target || event.srcElement;
             var ischildadder = this.view.is_childadder(element);
-
+            var loading = $d.getElementsByClassName('loading')[0];
             if (ischildadder) {
-
-                $t(element, 'Loading');
+                setSelect([element.getAttribute('position'), this.view.get_binded_nodeid(element), this.view.get_binded_nodetopic(element)])
+                if (element.className.includes('loading')) return;
                 element.className += 'loading'
-                element.disabled = true
-
-                const root = this.get_root();
-                var nodeid = this.view.get_binded_nodeid(element);
-                if (nodeid === 'root') element.style.left = (Number(element.style.left.split('px')[0]) - 50) + 'px'
-                let prompt = this.view.get_binded_nodetopic(element);
-                let parentid = nodeid;
-                const newString = await handleClick(prompt);
-                let generatedData = parse(newString, root.topic, !Number(element.style.left.split('px')[0]) < 313);
-                let newData = generatedData.map((i) => {
-                    if (i.parentid === "root") {
-                        if (parentid === "root") {
-                            return {
-                                ...i,
-                                parentid: parentid,
-                                direction: markdown.filter((i) => i.direction === "left")
-                                    .length
-                                    ? "top"
-                                    : markdown.filter((i) => i.direction === "top").length
-                                        ? "bottom"
-                                        : "left",
-                                        left:Number(element.style.left.split('px')[0]) < 313
-                            };
-                        } else {
-                            return {
-                                ...i,
-                                parentid: parentid,
-                                left:Number(element.style.left.split('px')[0]) < 313
-                            };
-                        }
-                    } else {
-                        return {...i,
-                        left:Number(element.style.left.split('px')[0]) < 313};
-                    }
-                });
-                setShowMap(false)
-                let d = [...markdown.filter(
-                    (i) => i.id !== "root"
-                ), ...newData.map(i => ({...i,distance:'left'}))];
-
-                setMarkdown([...d.filter(i => !i.isroot), { ...d.filter(i => i.isroot)[0], more: !Number(element.style.left.split('px')[0]) < 313 }])
-
+            } else {
+                setSelect(false)
+                if (loading) loading.classList.remove('loading')
             }
         },
 
@@ -1174,9 +1129,12 @@ const { parse } = require('../../../libs/commonParser')
             }
             if (this.get_editable()) {
                 var element = e.target || event.srcElement;
-                var nodeid = this.view.get_binded_nodeid(element);
-                if (!!nodeid) {
-                    this.begin_edit(nodeid);
+                var is_node = this.view.is_node(element);
+                if (is_node) {
+                    var nodeid = this.view.get_binded_nodeid(element);
+                    if (!!nodeid) {
+                        this.begin_edit(nodeid);
+                    }
                 }
             }
         },
@@ -1190,8 +1148,7 @@ const { parse } = require('../../../libs/commonParser')
             // Avoid default page scrolling behavior.
             event.preventDefault()
 
-            var dir = event.deltaY > 0 ? "Up" : "Down"
-            if (dir == "Up") {
+            if (event.deltaY < 0) {
                 this.view.zoomIn()
             } else {
                 this.view.zoomOut()
@@ -1295,9 +1252,10 @@ const { parse } = require('../../../libs/commonParser')
         _show: function (mind) {
             var m = mind || jm.format.node_array.example;
             markdown = mind.functions.markdown
-            showMap = mind.functions.showMap
             setShowMap = mind.functions.setShowMap
             setMarkdown = mind.functions.setMarkdown
+            setSelect = mind.functions.setSelect
+
             this.mind = this.data.load(m);
             if (!this.mind) {
                 logger.error('data.load error');
@@ -1327,6 +1285,7 @@ const { parse } = require('../../../libs/commonParser')
             return {
                 name: this.mind.name,
                 author: this.mind.author,
+                version: this.mind.version
             };
         },
 
@@ -1346,18 +1305,21 @@ const { parse } = require('../../../libs/commonParser')
             return this.mind.get_node(node);
         },
 
-        add_node: function (parent_node, nodeid, topic, data) {
+        add_node: function (parent_node, nodeid, topic, data, direction) {
             if (this.get_editable()) {
                 var the_parent_node = this.get_node(parent_node);
-                var direction = this.layout.calculate_next_child_direction(the_parent_node);
-                var node = this.mind.add_node(the_parent_node, nodeid, topic, data, direction);
+                var dir = jm.direction.of(direction)
+                if (dir === undefined) {
+                    dir = this.layout.calculate_next_child_direction(the_parent_node);
+                }
+                var node = this.mind.add_node(the_parent_node, nodeid, topic, data, dir);
                 if (!!node) {
                     this.view.add_node(node);
                     this.layout.layout();
                     this.view.show(false);
                     this.view.reset_node_custom_style(node);
                     this.expand_node(the_parent_node);
-                    this.invoke_event_handle(jm.event_type.edit, { evt: 'add_node', data: [the_parent_node.id, nodeid, topic, data], node: nodeid });
+                    this.invoke_event_handle(jm.event_type.edit, { evt: 'add_node', data: [the_parent_node.id, nodeid, topic, data, dir], node: nodeid });
                 }
                 return node;
             } else {
@@ -1366,16 +1328,19 @@ const { parse } = require('../../../libs/commonParser')
             }
         },
 
-        insert_node_before: function (node_before, nodeid, topic, data) {
+        insert_node_before: function (node_before, nodeid, topic, data, direction) {
             if (this.get_editable()) {
                 var the_node_before = this.get_node(node_before);
-                var direction = this.layout.calculate_next_child_direction(the_node_before.parent);
-                var node = this.mind.insert_node_before(the_node_before, nodeid, topic, data, direction);
+                var dir = jm.direction.of(direction)
+                if (dir === undefined) {
+                    dir = this.layout.calculate_next_child_direction(the_node_before.parent);
+                }
+                var node = this.mind.insert_node_before(the_node_before, nodeid, topic, data, dir);
                 if (!!node) {
                     this.view.add_node(node);
                     this.layout.layout();
                     this.view.show(false);
-                    this.invoke_event_handle(jm.event_type.edit, { evt: 'insert_node_before', data: [the_node_before.id, nodeid, topic, data], node: nodeid });
+                    this.invoke_event_handle(jm.event_type.edit, { evt: 'insert_node_before', data: [the_node_before.id, nodeid, topic, data, dir], node: nodeid });
                 }
                 return node;
             } else {
@@ -1384,16 +1349,19 @@ const { parse } = require('../../../libs/commonParser')
             }
         },
 
-        insert_node_after: function (node_after, nodeid, topic, data) {
+        insert_node_after: function (node_after, nodeid, topic, data, direction) {
             if (this.get_editable()) {
                 var the_node_after = this.get_node(node_after);
-                var direction = this.layout.calculate_next_child_direction(the_node_after.parent);
-                var node = this.mind.insert_node_after(the_node_after, nodeid, topic, data, direction);
+                var dir = jm.direction.of(direction)
+                if (dir === undefined) {
+                    dir = this.layout.calculate_next_child_direction(the_node_after.parent);
+                }
+                var node = this.mind.insert_node_after(the_node_after, nodeid, topic, data, dir);
                 if (!!node) {
                     this.view.add_node(node);
                     this.layout.layout();
                     this.view.show(false);
-                    this.invoke_event_handle(jm.event_type.edit, { evt: 'insert_node_after', data: [the_node_after.id, nodeid, topic, data], node: nodeid });
+                    this.invoke_event_handle(jm.event_type.edit, { evt: 'insert_node_after', data: [the_node_after.id, nodeid, topic, data, dir], node: nodeid });
                 }
                 return node;
             } else {
@@ -1697,7 +1665,6 @@ const { parse } = require('../../../libs/commonParser')
 
     };
 
-    // ============= data provider =============================================
 
     jm.data_provider = function (jm) {
         this.jm = jm;
@@ -1752,7 +1719,6 @@ const { parse } = require('../../../libs/commonParser')
         },
     };
 
-    // ============= layout provider ===========================================
 
     jm.layout_provider = function (jm, options) {
         this.opts = options;
@@ -1910,6 +1876,9 @@ const { parse } = require('../../../libs/commonParser')
                     this.set_visible(node.children, false);
                 }
                 node_outer_height = Math.max(node._data.view.height, node_outer_height);
+                if (node.children.length > 1) {
+                    node_outer_height += this.opts.cousin_space;
+                }
 
                 layout_data.outer_height = node_outer_height;
                 layout_data.offset_y = base_y - node_outer_height / 2;
@@ -1955,6 +1924,9 @@ const { parse } = require('../../../libs/commonParser')
                     node_outer_height = 0;
                 }
                 node_outer_height = Math.max(node._data.view.height, node_outer_height);
+                if (node.children.length > 1) {
+                    node_outer_height += this.opts.cousin_space;
+                }
 
                 layout_data.outer_height = node_outer_height;
                 layout_data.offset_y = base_y - node_outer_height / 2;
@@ -2039,17 +2011,6 @@ const { parse } = require('../../../libs/commonParser')
             return pout_cache;
         },
 
-        // get_expander_point: function (node) {
-        //     var p = this.get_node_point_out(node);
-        //     var ex_p = {};
-        //     if (node._data.layout.direction == jm.direction.right) {
-        //         ex_p.x = p.x - this.opts.pspace;
-        //     } else {
-        //         ex_p.x = p.x;
-        //     }
-        //     ex_p.y = p.y - Math.ceil(this.opts.pspace / 2);
-        //     return ex_p;
-        // },
 
         get_childadder_point: function (node) {
             var p = this.get_node_point_out(node);
@@ -2244,6 +2205,7 @@ const { parse } = require('../../../libs/commonParser')
             ctx.strokeStyle = this.opts.line_color;
             ctx.lineWidth = this.opts.line_width;
             ctx.lineCap = 'round';
+
             this._bezier_to(ctx,
                 pin.x + offset.x,
                 pin.y + offset.y,
@@ -2332,7 +2294,6 @@ const { parse } = require('../../../libs/commonParser')
         }
     };
 
-    // view provider
     jm.view_provider = function (jm, options) {
         this.opts = options;
         this.jm = jm;
@@ -2364,8 +2325,7 @@ const { parse } = require('../../../libs/commonParser')
             this.e_editor = $c('input');
 
             this.graph = this.opts.engine.toLowerCase() === 'svg' ? new jm.graph_svg(this) : new jm.graph_canvas(this);
-
-            this.e_panel.className = 'jsmind-inner scrollStyle';
+            this.e_panel.className = 'jsmind-inner jmnode-overflow-' + this.opts.node_overflow;
             this.e_panel.tabIndex = 1;
             this.e_panel.appendChild(this.graph.element());
             this.e_panel.appendChild(this.e_nodes);
@@ -2389,7 +2349,10 @@ const { parse } = require('../../../libs/commonParser')
 
             this.container.appendChild(this.e_panel);
 
-            this.enable_draggable_canvas()
+            // Used to avoid dragging, while editing node.
+            this.dragging_enabled = true
+
+            this.draggable_canvas()
         },
 
         add_event: function (obj, event_name, event_handle) {
@@ -2404,13 +2367,26 @@ const { parse } = require('../../../libs/commonParser')
                 return null;
             }
             var tagName = element.tagName.toLowerCase();
-            if (tagName == 'jmnodes' || tagName == 'body' || tagName == 'html') {
-                return null;
-            }
             if (tagName == 'jmnode' || tagName == 'jmchildadder') {
                 return element.getAttribute('nodeid');
+            } else if (tagName == 'jmnodes' || tagName == 'body' || tagName == 'html') {
+                return null;
             } else {
                 return this.get_binded_nodeid(element.parentElement);
+            }
+        },
+
+        is_node: function (element) {
+            if (element == null) {
+                return false;
+            }
+            var tagName = element.tagName.toLowerCase();
+            if (tagName == 'jmnode') {
+                return true;
+            } else if (tagName == 'jmnodes' || tagName == 'body' || tagName == 'html') {
+                return false;
+            } else {
+                return this.is_node(element.parentElement);
             }
         },
 
@@ -2428,12 +2404,10 @@ const { parse } = require('../../../libs/commonParser')
                 return this.get_binded_nodetopic(element.parentElement);
             }
         },
-        // is_expander: function (element) {
-        //     return (element.tagName.toLowerCase() == 'jmexpander');
-        // },
         is_childadder: function (element) {
             return (element.tagName.toLowerCase() == 'jmchildadder');
         },
+
 
         reset: function () {
             logger.debug('view.reset');
@@ -2515,9 +2489,18 @@ const { parse } = require('../../../libs/commonParser')
                 $t(d_ca, '-');
                 d_ca.setAttribute('nodeid', node.id);
                 d_ca.setAttribute('nodetopic', node.data.text);
+                d_ca.setAttribute('position', 'left');
                 d_ca.style.visibility = 'hidden';
                 parent_node.appendChild(d_ca);
                 view_data.childadder = d_ca;
+                var d_cas = $c('jmchildadder');
+                $t(d_cas, '-');
+                d_cas.setAttribute('nodeid', node.id);
+                d_cas.setAttribute('nodetopic', node.data.text);
+                d_cas.setAttribute('position', 'right');
+                d_cas.style.visibility = 'hidden';
+                parent_node.appendChild(d_cas);
+                view_data.childadder2 = d_cas;
             } else {
                 // var d_e = $c('jmexpander');
                 // $t(d_e, '-');
@@ -2529,6 +2512,7 @@ const { parse } = require('../../../libs/commonParser')
                 $t(d_ca, '-');
                 d_ca.setAttribute('nodeid', node.id);
                 d_ca.setAttribute('nodetopic', node.data.text);
+                d_ca.setAttribute('position', 'right');
                 d_ca.style.visibility = 'hidden';
                 parent_node.appendChild(d_ca);
                 view_data.childadder = d_ca;
@@ -2563,14 +2547,14 @@ const { parse } = require('../../../libs/commonParser')
             }
             if (node._data.view) {
                 var element = node._data.view.element;
-                // var expander = node._data.view.expander;
                 var childadder = node._data.view.childadder;
+                var childadder2 = node._data.view.childadder2;
                 this.e_nodes.removeChild(element);
-                // this.e_nodes.removeChild(expander);
                 this.e_nodes.removeChild(childadder);
+                this.e_nodes.removeChild(childadder2);
                 node._data.view.element = null;
-                // node._data.view.expander = null;
                 node._data.view.childadder = null;
+                node._data.view.childadder2 = null;
             }
         },
 
@@ -2584,8 +2568,16 @@ const { parse } = require('../../../libs/commonParser')
                     $t(element, node.topic);
                 }
             }
-            view_data.width = element.clientWidth;
-            view_data.height = element.clientHeight;
+            if (this.layout.is_visible(node)) {
+                view_data.width = element.clientWidth;
+                view_data.height = element.clientHeight;
+            } else {
+                let origin_style = element.getAttribute('style');
+                element.style = 'visibility: visible; left:0; top:0;';
+                view_data.width = element.clientWidth;
+                view_data.height = element.clientHeight;
+                element.style = origin_style;
+            }
         },
 
         select_node: function (node) {
@@ -2697,7 +2689,7 @@ const { parse } = require('../../../libs/commonParser')
             }
             this.actualZoom = zoom;
             for (var i = 0; i < this.e_panel.children.length; i++) {
-                this.e_panel.children[i].style.transform = 'scale(' + zoom + ')';
+                this.e_panel.children[i].style.zoom = zoom;
             };
             this.show(true);
             return true;
@@ -2710,10 +2702,10 @@ const { parse } = require('../../../libs/commonParser')
             var outer_h = this.e_panel.clientHeight;
             if (this.size.w > outer_w) {
                 var _offset = this.get_view_offset();
-                this.e_panel.scrollLeft = _offset.x - outer_w / 2;
+                this.e_panel.scrollLeft = _offset.x * this.actualZoom - outer_w / 2;
             }
             if (this.size.h > outer_h) {
-                this.e_panel.scrollTop = (this.size.h - outer_h) / 2;
+                this.e_panel.scrollTop = (this.size.h * this.actualZoom - outer_h) / 2;
             }
         },
 
@@ -2756,7 +2748,7 @@ const { parse } = require('../../../libs/commonParser')
                 node = nodes[nodeid];
                 node._data.view.element = null;
                 node._data.view.childadder = null;
-                // node._data.view.expander = null;
+                node._data.view.childadder2 = null;
             }
             this.e_nodes.innerHTML = '';
         },
@@ -2765,24 +2757,24 @@ const { parse } = require('../../../libs/commonParser')
             var nodes = this.jm.mind.nodes;
             var node = null;
             var node_element = null;
-            // var expander = null;
             var childadder = null;
+            var childadder2 = null;
             var p = null;
-            // let p_expander = null;
             let p_childadder = null;
-            // var expander_text = '-';
+            let p_childadder2 = null;
             var childadder_text = '-';
+            var childadder2_text = '-';
             var view_data = null;
             var _offset = this.get_view_offset();
             for (var nodeid in nodes) {
                 node = nodes[nodeid];
                 view_data = node._data.view;
                 node_element = view_data.element;
-                // expander = view_data.expander;
                 childadder = view_data.childadder;
+                childadder2 = view_data.childadder2;
                 if (!this.layout.is_visible(node)) {
                     node_element.style.display = 'none';
-                    // expander.style.display = 'none';
+                    expander.style.display = 'none';
                     continue;
                 }
                 this.reset_node_custom_style(node);
@@ -2793,33 +2785,26 @@ const { parse } = require('../../../libs/commonParser')
                 node_element.style.top = (_offset.y + p.y) + 'px';
                 node_element.style.display = '';
                 node_element.style.visibility = 'visible';
-                if (node.isroot && node.data.more) {
+                if (node.isroot) {
                     childadder_text = '+';
                     p_childadder = this.layout.get_childadder_point(node);
-                    childadder.style.left = (Number(node_element.style.left.split('px')[0]) - 25) + 'px';
+                    childadder.style.left = (Number(node_element.style.left.split('px')[0]) - 20) + 'px';
                     childadder.style.top = Number(node_element.style.top.split('px')[0]) + (node_element.offsetHeight / 2) - 8 + 'px';
                     childadder.style.display = '';
                     childadder.style.visibility = 'visible';
                     $t(childadder, childadder_text);
+                    childadder2_text = '+';
+                    p_childadder2 = this.layout.get_childadder_point(node);
+                    childadder2.style.left = Number(node_element.style.left.split('px')[0]) + 3 + node_element.offsetWidth + 'px';
+                    childadder2.style.top = Number(node_element.style.top.split('px')[0]) + (node_element.offsetHeight / 2) - 8 + 'px';
+                    childadder2.style.display = '';
+                    childadder2.style.visibility = 'visible';
+                    $t(childadder2, childadder2_text);
                 }
-                if (!node.isroot && node.children.length > 0) {
-                    // expander_text = node.expanded ? '-' : '+';
-                    // p_expander = this.layout.get_expander_point(node);
-                    // expander.style.left = Number(node_element.style.left.split('px')[0])+3 + node_element.offsetWidth+'px';
-                    // expander.style.top = Number(node_element.style.top.split('px')[0]) + (node_element.offsetHeight/2)-2 + 'px';
-                    // expander.style.display = '';
-                    // expander.style.visibility = 'visible';
-                    // $t(expander, expander_text);
-                    childadder.style.display = 'none';
-                    childadder.style.visibility = 'hidden';
-                }
-                // hide expander while all children have been removed
-                if (!node.isroot && node.children.length == 0) {
-                    childadder.style.display = 'none';
-                    childadder.style.visibility = 'hidden';
+                else {
                     childadder_text = '+';
                     p_childadder = this.layout.get_childadder_point(node);
-                    childadder.style.left = node.data.left ? (Number(node_element.style.left.split('px')[0]) - 21) + 'px': Number(node_element.style.left.split('px')[0]) + 3 + node_element.offsetWidth + 'px';
+                    childadder.style.left = node.data.left ? (Number(node_element.style.left.split('px')[0]) - 21) + 'px' : Number(node_element.style.left.split('px')[0]) + 3 + node_element.offsetWidth + 'px';
                     childadder.style.top = Number(node_element.style.top.split('px')[0]) + (node_element.offsetHeight / 2) - 8 + 'px';
                     childadder.style.display = '';
                     childadder.style.visibility = 'visible';
@@ -2911,8 +2896,8 @@ const { parse } = require('../../../libs/commonParser')
             }
         },
 
-        // Drag the whole mind map with your mouse, when it's larger that the container
-        enable_draggable_canvas: function () {
+        // Drag the whole mind map with your mouse (usefull when it's larger that the container).
+        draggable_canvas: function () {
             // If draggable option is true.
             if (this.opts.draggable) {
                 // Dragging disabled by default.
@@ -2935,7 +2920,7 @@ const { parse } = require('../../../libs/commonParser')
                 })
                 // Follow current mouse position and move mind map accordingly.
                 jm.util.dom.add_event(this.container, 'mousemove', (eventMove) => {
-                    if (dragging) {
+                    if (this.dragging_enabled && dragging) {
                         this.e_panel.scrollBy(x - eventMove.clientX, y - eventMove.clientY)
                         // Record new current position.
                         x = eventMove.clientX
@@ -2945,9 +2930,20 @@ const { parse } = require('../../../libs/commonParser')
             }
         },
 
+        get_draggable_canvas: function () {
+            return this.opts.draggable
+        },
+
+        enable_draggable_canvas: function () {
+            this.dragging_enabled = true
+        },
+
+        disable_draggable_canvas: function () {
+            this.dragging_enabled = false
+        },
+
     };
 
-    // shortcut provider
     jm.shortcut_provider = function (jm, options) {
         this.jm = jm;
         this.opts = options;
@@ -2973,7 +2969,13 @@ const { parse } = require('../../../libs/commonParser')
 
             for (var handle in this.mapping) {
                 if (!!this.mapping[handle] && (handle in this.handles)) {
-                    this._mapping[this.mapping[handle]] = this.handles[handle];
+                    var keys = this.mapping[handle];
+                    if (!Array.isArray(keys)) {
+                        keys = [keys]
+                    }
+                    for (let key of keys) {
+                        this._mapping[key] = this.handles[handle];
+                    }
                 }
             }
 
@@ -3125,7 +3127,6 @@ const { parse } = require('../../../libs/commonParser')
     };
 
 
-    // plugin
     jm.plugin = function (name, init) {
         this.name = name;
         this.init = init;
@@ -3156,14 +3157,384 @@ const { parse } = require('../../../libs/commonParser')
         }
     };
 
-    // quick way
     jm.show = function (options, mind) {
+        logger.warn('`jsMind.show(options, mind)` is deprecated, please use `jm = new jsMind(options); jm.show(mind);` instead')
         var _jm = new jm(options);
         _jm.show(mind);
         return _jm;
     };
 
-    // export jsmind
+
+    var jdom = jm.util.dom;
+    var clear_selection = 'getSelection' in $w ? function () {
+        $w.getSelection().removeAllRanges();
+    } : function () {
+        $d.selection.empty();
+    };
+
+    var options = {
+        line_width: 5,
+        line_color: 'rgba(0,0,0,0.3)',
+        lookup_delay: 500,
+        lookup_interval: 80,
+        scrolling_trigger_width: 20,
+        scrolling_step_length: 10
+    };
+
+    jm.draggable = function (jm) {
+        this.jm = jm;
+        this.e_canvas = null;
+        this.canvas_ctx = null;
+        this.shadow = null;
+        this.shadow_w = 0;
+        this.shadow_h = 0;
+        this.active_node = null;
+        this.target_node = null;
+        this.target_direct = null;
+        this.client_w = 0;
+        this.client_h = 0;
+        this.offset_x = 0;
+        this.offset_y = 0;
+        this.hlookup_delay = 0;
+        this.hlookup_timer = 0;
+        this.capture = false;
+        this.moved = false;
+        this.view_panel = jm.view.e_panel;
+        this.view_panel_rect = null
+    };
+
+    jm.draggable.prototype = {
+        init: function () {
+            this._create_canvas();
+            this._create_shadow();
+            this._event_bind();
+        },
+
+        resize: function () {
+            this.jm.view.e_nodes.appendChild(this.shadow);
+            this.e_canvas.width = this.jm.view.size.w;
+            this.e_canvas.height = this.jm.view.size.h;
+        },
+
+        _create_canvas: function () {
+            var c = $d.createElement('canvas');
+            this.jm.view.e_panel.appendChild(c);
+            var ctx = c.getContext('2d');
+            this.e_canvas = c;
+            this.canvas_ctx = ctx;
+        },
+
+        _create_shadow: function () {
+            var s = $d.createElement('jmnode');
+            s.style.visibility = 'hidden';
+            s.style.zIndex = '3';
+            s.style.cursor = 'move';
+            s.style.opacity = '0.7';
+            this.shadow = s;
+        },
+
+        reset_shadow: function (el) {
+            var s = this.shadow.style;
+            this.shadow.innerHTML = el.innerHTML;
+            s.left = el.style.left;
+            s.top = el.style.top;
+            s.width = el.style.width;
+            s.height = el.style.height;
+            s.backgroundImage = el.style.backgroundImage;
+            s.backgroundSize = el.style.backgroundSize;
+            s.transform = el.style.transform;
+            this.shadow_w = this.shadow.clientWidth;
+            this.shadow_h = this.shadow.clientHeight;
+
+        },
+
+        show_shadow: function () {
+            if (!this.moved) {
+                this.shadow.style.visibility = 'visible';
+            }
+        },
+
+        hide_shadow: function () {
+            this.shadow.style.visibility = 'hidden';
+        },
+
+        _magnet_shadow: function (node) {
+            if (!!node) {
+                this.canvas_ctx.lineWidth = options.line_width;
+                this.canvas_ctx.strokeStyle = options.line_color;
+                this.canvas_ctx.lineCap = 'round';
+                this._clear_lines();
+                this._canvas_lineto(node.sp.x, node.sp.y, node.np.x, node.np.y);
+            }
+        },
+
+        _clear_lines: function () {
+            this.canvas_ctx.clearRect(0, 0, this.jm.view.size.w, this.jm.view.size.h);
+        },
+
+        _canvas_lineto: function (x1, y1, x2, y2) {
+            this.canvas_ctx.beginPath();
+            this.canvas_ctx.moveTo(x1, y1);
+            this.canvas_ctx.lineTo(x2, y2);
+            this.canvas_ctx.stroke();
+        },
+
+        _lookup_close_node: function () {
+            var root = this.jm.get_root();
+            var root_location = root.get_location();
+            var root_size = root.get_size();
+            var root_x = root_location.x + root_size.w / 2;
+
+            var sw = this.shadow_w;
+            var sh = this.shadow_h;
+            var sx = this.shadow.offsetLeft;
+            var sy = this.shadow.offsetTop;
+
+            var ns, nl;
+
+            var direct = (sx + sw / 2) >= root_x ?
+                jm.direction.right : jm.direction.left;
+            var nodes = this.jm.mind.nodes;
+            var node = null;
+            var layout = this.jm.layout;
+            var min_distance = Number.MAX_VALUE;
+            var distance = 0;
+            var closest_node = null;
+            var closest_p = null;
+            var shadow_p = null;
+            for (var nodeid in nodes) {
+                var np, sp;
+                node = nodes[nodeid];
+                if (node.isroot || node.direction == direct) {
+                    if (node.id == this.active_node.id) {
+                        continue;
+                    }
+                    if (!layout.is_visible(node)) {
+                        continue;
+                    }
+                    ns = node.get_size();
+                    nl = node.get_location();
+                    if (direct == jm.direction.right) {
+                        if (sx - nl.x - ns.w <= 0) { continue; }
+                        distance = Math.abs(sx - nl.x - ns.w) + Math.abs(sy + sh / 2 - nl.y - ns.h / 2);
+                        np = { x: nl.x + ns.w - options.line_width, y: nl.y + ns.h / 2 };
+                        sp = { x: sx + options.line_width, y: sy + sh / 2 };
+                    } else {
+                        if (nl.x - sx - sw <= 0) { continue; }
+                        distance = Math.abs(sx + sw - nl.x) + Math.abs(sy + sh / 2 - nl.y - ns.h / 2);
+                        np = { x: nl.x + options.line_width, y: nl.y + ns.h / 2 };
+                        sp = { x: sx + sw - options.line_width, y: sy + sh / 2 };
+                    }
+                    if (distance < min_distance) {
+                        closest_node = node;
+                        closest_p = np;
+                        shadow_p = sp;
+                        min_distance = distance;
+                    }
+                }
+            }
+            var result_node = null;
+            if (!!closest_node) {
+                result_node = {
+                    node: closest_node,
+                    direction: direct,
+                    sp: shadow_p,
+                    np: closest_p
+                };
+            }
+            return result_node;
+        },
+
+        lookup_close_node: function () {
+            var node_data = this._lookup_close_node();
+            if (!!node_data) {
+                this._magnet_shadow(node_data);
+                this.target_node = node_data.node;
+                this.target_direct = node_data.direction;
+            }
+        },
+
+        _event_bind: function () {
+            var jd = this;
+            var container = this.jm.view.container;
+            jdom.add_event(container, 'mousedown', function (e) {
+                var evt = e || event;
+                jd.dragstart.call(jd, evt);
+            });
+            jdom.add_event(container, 'mousemove', function (e) {
+                var evt = e || event;
+                jd.drag.call(jd, evt);
+            });
+            jdom.add_event(container, 'mouseup', function (e) {
+                var evt = e || event;
+                jd.dragend.call(jd, evt);
+            });
+            jdom.add_event(container, 'touchstart', function (e) {
+                var evt = e || event;
+                jd.dragstart.call(jd, evt);
+            });
+            jdom.add_event(container, 'touchmove', function (e) {
+                var evt = e || event;
+                jd.drag.call(jd, evt);
+            });
+            jdom.add_event(container, 'touchend', function (e) {
+                var evt = e || event;
+                jd.dragend.call(jd, evt);
+            });
+        },
+
+        dragstart: function (e) {
+            if (!this.jm.get_editable()) { return; }
+            if (this.capture) { return; }
+            this.active_node = null;
+
+            var jview = this.jm.view;
+            var el = e.target || event.srcElement;
+            if (el.tagName.toLowerCase() != 'jmnode') { return; }
+            if (jview.get_draggable_canvas()) { jview.disable_draggable_canvas() }
+            var nodeid = jview.get_binded_nodeid(el);
+            if (!!nodeid) {
+                var node = this.jm.get_node(nodeid);
+                if (!node.isroot) {
+                    this.reset_shadow(el);
+                    this.view_panel_rect = this.view_panel.getBoundingClientRect()
+                    this.active_node = node;
+                    this.offset_x = (e.clientX || e.touches[0].clientX) / jview.actualZoom - el.offsetLeft;
+                    this.offset_y = (e.clientY || e.touches[0].clientY) / jview.actualZoom - el.offsetTop;
+                    this.client_hw = Math.floor(el.clientWidth / 2);
+                    this.client_hh = Math.floor(el.clientHeight / 2);
+                    if (this.hlookup_delay != 0) {
+                        $w.clearTimeout(this.hlookup_delay);
+                    }
+                    if (this.hlookup_timer != 0) {
+                        $w.clearInterval(this.hlookup_timer);
+                    }
+                    var jd = this;
+                    this.hlookup_delay = $w.setTimeout(function () {
+                        jd.hlookup_delay = 0;
+                        jd.hlookup_timer = $w.setInterval(function () {
+                            jd.lookup_close_node.call(jd);
+                        }, options.lookup_interval);
+                    }, options.lookup_delay);
+                    this.capture = true;
+                }
+            }
+        },
+
+        drag: function (e) {
+            if (!this.jm.get_editable()) { return; }
+            if (this.capture) {
+                e.preventDefault();
+                this.show_shadow();
+                this.moved = true;
+                clear_selection();
+                var jview = this.jm.view;
+                var px = (e.clientX || e.touches[0].clientX) / jview.actualZoom - this.offset_x;
+                var py = (e.clientY || e.touches[0].clientY) / jview.actualZoom - this.offset_y;
+                // scrolling container axisY if drag nodes exceeding container
+                if (
+                    e.clientY - this.view_panel_rect.top < options.scrolling_trigger_width &&
+                    this.view_panel.scrollTop > options.scrolling_step_length
+                ) {
+                    this.view_panel.scrollBy(0, -options.scrolling_step_length);
+                    this.offset_y += options.scrolling_step_length / jview.actualZoom;
+                } else if (
+                    this.view_panel_rect.bottom - e.clientY < options.scrolling_trigger_width &&
+                    this.view_panel.scrollTop <
+                    this.view_panel.scrollHeight - this.view_panel_rect.height - options.scrolling_step_length
+                ) {
+                    this.view_panel.scrollBy(0, options.scrolling_step_length);
+                    this.offset_y -= options.scrolling_step_length / jview.actualZoom;
+                }
+                // scrolling container axisX if drag nodes exceeding container
+                if (e.clientX - this.view_panel_rect.left < options.scrolling_trigger_width && this.view_panel.scrollLeft > options.scrolling_step_length) {
+                    this.view_panel.scrollBy(-options.scrolling_step_length, 0);
+                    this.offset_x += options.scrolling_step_length / jview.actualZoom;
+                } else if (
+                    this.view_panel_rect.right - e.clientX < options.scrolling_trigger_width &&
+                    this.view_panel.scrollLeft < this.view_panel.scrollWidth - this.view_panel_rect.width - options.scrolling_step_length
+                ) {
+                    this.view_panel.scrollBy(options.scrolling_step_length, 0);
+                    this.offset_x -= options.scrolling_step_length / jview.actualZoom;
+                }
+                this.shadow.style.left = px + 'px';
+                this.shadow.style.top = py + 'px';
+                clear_selection();
+            }
+        },
+
+        dragend: function (e) {
+            if (!this.jm.get_editable()) { return; }
+            if (this.jm.view.get_draggable_canvas()) { this.jm.view.enable_draggable_canvas() }
+            if (this.capture) {
+                if (this.hlookup_delay != 0) {
+                    $w.clearTimeout(this.hlookup_delay);
+                    this.hlookup_delay = 0;
+                    this._clear_lines();
+                }
+                if (this.hlookup_timer != 0) {
+                    $w.clearInterval(this.hlookup_timer);
+                    this.hlookup_timer = 0;
+                    this._clear_lines();
+                }
+                if (this.moved) {
+                    var src_node = this.active_node;
+                    var target_node = this.target_node;
+                    var target_direct = this.target_direct;
+                    this.move_node(src_node, target_node, target_direct);
+                }
+                this.hide_shadow();
+            }
+            this.view_panel_rect = null
+            this.moved = false;
+            this.capture = false;
+        },
+
+        move_node: function (src_node, target_node, target_direct) {
+            var shadow_h = this.shadow.offsetTop;
+            if (!!target_node && !!src_node && !jm.node.inherited(src_node, target_node)) {
+                // lookup before_node
+                var sibling_nodes = target_node.children;
+                var sc = sibling_nodes.length;
+                var node = null;
+                var delta_y = Number.MAX_VALUE;
+                var node_before = null;
+                var beforeid = '_last_';
+                while (sc--) {
+                    node = sibling_nodes[sc];
+                    if (node.direction == target_direct && node.id != src_node.id) {
+                        var dy = node.get_location().y - shadow_h;
+                        if (dy > 0 && dy < delta_y) {
+                            delta_y = dy;
+                            node_before = node;
+                            beforeid = '_first_';
+                        }
+                    }
+                }
+                if (!!node_before) { beforeid = node_before.id; }
+                this.jm.move_node(src_node.id, beforeid, target_node.id, target_direct);
+            }
+            this.active_node = null;
+            this.target_node = null;
+            this.target_direct = null;
+        },
+
+        jm_event_handle: function (type, data) {
+            if (type === jm.event_type.resize) {
+                this.resize();
+            }
+        }
+    };
+
+    var draggable_plugin = new jm.plugin('draggable', function (jms) {
+        var jd = new jm.draggable(jms);
+        jd.init();
+        jms.add_event_listener(function (type, data) {
+            jd.jm_event_handle.call(jd, type, data);
+        });
+    });
+
+    jm.register_plugin(draggable_plugin);
     if (typeof module !== 'undefined' && typeof exports === 'object') {
         module.exports = jm;
     } else if (typeof define === 'function' && (define.amd || define.cmd)) {
@@ -3171,5 +3542,4 @@ const { parse } = require('../../../libs/commonParser')
     } else {
         $w[__name__] = jm;
     }
-    module.exports = jm
 })(typeof window !== 'undefined' ? window : global);

@@ -4,7 +4,7 @@ import React from 'react'
 const Header = () => {
     return (
         <div className='flex flex-col'>
-            <div className='flex justify-between  px-[90px] py-[20px]'>
+            <div className='flex justify-between  px-[90px] py-[10px]'>
                 <div className='text-transparent'> john doe</div>
                 <Link href="/signin">
                     <div className='flex gap-x-4 items-center'>

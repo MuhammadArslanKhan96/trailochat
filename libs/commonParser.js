@@ -61,8 +61,8 @@ export function parse(content, topic, more, matchMap = Status) {
   let filterArr = Object.keys(matchMap);
   let root = {
     id: "root",
-    text: topic,
-    topic: topic,
+    text: topic.replace(topic.charAt(0), topic.charAt(0).toUpperCase()),
+    topic: topic.replace(topic.charAt(0), topic.charAt(0).toUpperCase()),
     isroot: true,
     more
   };
@@ -105,16 +105,22 @@ export function parse(content, topic, more, matchMap = Status) {
         nodeStack.pop();
         lastNode = nodeStack[nodeStack.length - 1];
       }
-
+      let newTitles = title.split(':').map((line) => {
+        if (line.replace('**', '').length) {
+          return line.replace('**', '')
+        } else {
+          return false
+        }
+      }).filter((i) => i !== false)
       //saving the node
       let node = {
-        id: title.split(':')[0].toLowerCase() + "_" + uuidv4(),
+        id: newTitles[0].toLowerCase() + "_" + uuidv4(),
         parentid: lastNode.id,
-        text: title.split(':')[0],
+        text: newTitles[0].replace(newTitles[0].charAt(0), newTitles[0].charAt(0).toUpperCase()),
         left: false,
-        topic: title.split(':').length > 1 ? `<div style="pointer-events:none;font-weight:bold;width:100%;">${title.split(':')[0]}</div><div style="pointer-events:none;width:100%;">${title.split(':')[1]}</div>`.replace('*','') : title.split(':')[0].replace('*',''), // .replace(title.charAt(0), title.charAt(0).toUpperCase()),
+        topic: newTitles.length > 1 ? `<div style="pointer-events:none;font-weight:bold;width:100%;">${newTitles[0].replace(newTitles[0].charAt(0), newTitles[0].charAt(0).toUpperCase())}</div><div style="pointer-events:none;width:100%;margin-top:7px;">${newTitles[1].replace(newTitles[1].charAt(0), newTitles[1].charAt(0).toUpperCase())}</div>` : newTitles[0].replace(newTitles[0].charAt(0), newTitles[0].charAt(0).toUpperCase()), // .replace(title.charAt(0), title.charAt(0).toUpperCase()),
       };
-      if (!node.topic.includes('#')) {
+      if (!node.topic.includes('#') && node.text.toLowerCase() !== root.text.toLowerCase()) {
         nodes.push(node);
         nodeStack.push(node);
         lastNodeLevelStack.push(level);
