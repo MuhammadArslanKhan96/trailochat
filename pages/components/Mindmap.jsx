@@ -49,6 +49,9 @@ export default function Mindmap({ options, mind, data, topic,select,setSelect })
           }}
         ></div>
       )}
+      <button onClick={() => {
+        jsmind.shoot(jsmind)
+      }}>Export</button>
 
     </>
   );
