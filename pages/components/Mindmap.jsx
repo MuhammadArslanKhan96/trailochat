@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { parse } from "@/libs/commonParser";
-// import "./js/jsmind.draggable";
 import jsmind from "./js/jsmind";
 import { useContext } from "react";
 import { DataContext } from "../_app";
@@ -8,6 +7,7 @@ export default function Mindmap({ options, mind, data, topic,select,setSelect })
   const { showMap, markdown, setMarkdown, setShowMap } =
     useContext(DataContext);
   const jm = useRef();
+  const ref = useRef();
   useEffect(() => {
     setMarkdown(parse(data, topic, true));
     // eslint-disable-next-line
@@ -35,12 +35,12 @@ export default function Mindmap({ options, mind, data, topic,select,setSelect })
     // eslint-disable-next-line
   }, [showMap]);
 
-
   return (
     <>
       {showMap && (
         <div
           id="jsmind_container"
+          ref={ref}
           style={{
             width: "100%",
             height: "100%",
@@ -49,7 +49,7 @@ export default function Mindmap({ options, mind, data, topic,select,setSelect })
           }}
         ></div>
       )}
-      
+
     </>
   );
 }

@@ -85,8 +85,8 @@ const Chart = () => {
             vmargin: 50,
         },
         layout: {
-            hspace: 180,
-            vspace: 95,
+            hspace: 120,
+            vspace: 20,
             pspace: 13
         }
     };

@@ -18,6 +18,9 @@ body {
 .scrollStyle::-webkit-scrollbar {
   display: none;
 }
+#jsmind_container::-webkit-scrollbar {
+  display: none;
+}
 [data-mind-wired-viewport] {
   .mwd-body.level-0 {
     border: 1px solid #777;
