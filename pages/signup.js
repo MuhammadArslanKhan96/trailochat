@@ -51,7 +51,7 @@ const Signup = () => {
                         <div className="text-black font-bold text-[24px]">Sign in to your account</div>
                         <div className="px-[10px] py-[20px] ">
                             <div onClick={signup} className="flex justify-center gap-x-2 px-[55px] py-[18px] items-center 
-                             rounded-[50px] shadow-[0px_15px_50px_rgba(222,95,143,0.12)] bg-gradient-to-r from-[#E5E3E0]  to-[#625BF7] ">
+                             rounded-[50px] shadow-[0px_15px_50px_rgba(222,95,143,0.12)] bg-gradient-to-r from-[#E5E3E0] cursor-pointer to-[#625BF7] ">
                                 <div className="text-white items-center text-[16px]">
                                     <BsGoogle />
                                 </div>
