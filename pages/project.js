@@ -21,6 +21,7 @@ const Project = () => {
         if (!user) {
             router.replace(`/signin`)
         }
+        // eslint-disable-next-line
     }, [user])
     const handleClick = async () => {
 

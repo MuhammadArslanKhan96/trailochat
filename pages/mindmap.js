@@ -6,7 +6,7 @@ import Side from './Side'
 import Link from 'next/link'
 import { useContext } from 'react'
 import { UserContext } from '@/pages/_app'
-const mindmap = () => {
+const Mindmap = () => {
     const { user } = useContext(UserContext)
     return (
         <div className='flex'>
@@ -50,4 +50,4 @@ const mindmap = () => {
         </div>
     )
 }
-export default mindmap
+export default Mindmap

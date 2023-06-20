@@ -29,6 +29,7 @@ const Chart = () => {
         if (!user) {
             router.replace(`/signin`)
         }
+        // eslint-disable-next-line
     }, [user])
     const handleClick = async () => {
         if (topic !== '') {
@@ -219,6 +220,7 @@ const Chart = () => {
             setMaps(newMaps)
             addMyDocs(newMaps)
         }
+        // eslint-disable-next-line
     }, [markdown])
 
     return (

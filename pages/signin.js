@@ -16,6 +16,7 @@ const Signin = () => {
         if (user) {
             router.replace(`/mindmap`)
         }
+        // eslint-disable-next-line
     }, [user])
     const signin = async () => {
         let provider = new GoogleAuthProvider()

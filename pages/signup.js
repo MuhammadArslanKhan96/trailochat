@@ -31,6 +31,7 @@ const Signup = () => {
         if (user) {
             router.replace(`/mindmap`)
         }
+        // eslint-disable-next-line
     }, [user])
     return (
         <>

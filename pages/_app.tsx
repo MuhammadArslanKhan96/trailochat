@@ -24,13 +24,14 @@ export default function App({ Component, pageProps }: AppProps) {
     if (user) {
       getData()
     }
+    // eslint-disable-next-line
   }, [user])
 
   return (
     <>
       <Script src='./components/js/jsmind.draggable-node.js' />
       <UseMarkdown >
-        <UserContext.Provider value={{ user, setUser,maps,setMaps }}>
+        <UserContext.Provider value={{ user, setUser, maps, setMaps }}>
           <Component {...pageProps} />
         </UserContext.Provider>
       </UseMarkdown >
