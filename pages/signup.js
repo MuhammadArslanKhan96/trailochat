@@ -1,14 +1,37 @@
 import Image from "next/image";
-import React from "react";
+import React, { useContext } from "react";
 import { BsGoogle } from "react-icons/bs";
+import { auth } from "@/libs/firebase";
+import login from "@/libs/login";
 import { BsApple } from "react-icons/bs";
 import { BsFacebook } from "react-icons/bs";
 import { MdEmail } from "react-icons/md";
-
+import { UserContext } from '@/pages/_app'
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 
 const Signup = () => {
+    const router = useRouter()
+    const { user, setUser } = useContext(UserContext)
+    const signup = async () => {
+        let provider = new GoogleAuthProvider()
+        signInWithPopup(auth, provider)
+            .then(async (result) => {
+                const user = await result.user;
+                setUser({ email: user.email, image: user.providerData[0].photoURL, id: user.uid, name: user.displayName })
+                login(user)
+            }).catch((error) => {
+                console.error(error)
+            });
+    }
 
+    useEffect(() => {
+        if (user) {
+            router.replace(`/mindmap`)
+        }
+    }, [user])
     return (
         <>
             <section className="flex justify-center bg-[#FFFFFF]"
@@ -26,7 +49,7 @@ const Signup = () => {
                         </div>
                         <div className="text-black font-bold text-[24px]">Sign in to your account</div>
                         <div className="px-[10px] py-[20px] ">
-                            <div className="flex justify-center gap-x-2 px-[55px] py-[18px] items-center 
+                            <div onClick={signup} className="flex justify-center gap-x-2 px-[55px] py-[18px] items-center 
                              rounded-[50px] shadow-[0px_15px_50px_rgba(222,95,143,0.12)] bg-gradient-to-r from-[#E5E3E0]  to-[#625BF7] ">
                                 <div className="text-white items-center text-[16px]">
                                     <BsGoogle />

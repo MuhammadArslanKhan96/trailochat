@@ -7,10 +7,11 @@ const { Configuration, OpenAIApi } = require('openai');
 import Mindmap from "./components/Mindmap";
 import { v4 as uuidv4 } from "uuid";
 import Link from "next/link";
-import Head from "next/head";
-import { DataContext } from "./_app";
+import { DataContext, UserContext } from "./_app";
 import { parse } from "../libs/commonParser";
 import Camera from '@/public/images/camera.png'
+import { useRouter } from "next/router";
+import axios from "axios";
 const Chart = () => {
     const ref = useRef(null)
     const [data, setData] = useState('')
@@ -22,6 +23,13 @@ const Chart = () => {
     const [topic, setTopic] = useState('');
     const [loading, setLoading] = useState(false);
     const [inputText, setInputText] = useState('');
+    const router = useRouter()
+    const { user, setMaps, maps } = useContext(UserContext)
+    useEffect(() => {
+        if (!user) {
+            router.replace(`/signin`)
+        }
+    }, [user])
     const handleClick = async () => {
         if (topic !== '') {
             try {
@@ -38,7 +46,7 @@ const Chart = () => {
                 });
                 const str = response.data.choices[0].message.content;
 
-                setData(str)
+                setData(parse(str, topic, true))
                 setLoad(false)
             } catch (error) {
                 setLoad(false)
@@ -110,7 +118,7 @@ const Chart = () => {
             check: true
         },
     ];
-    const { showMap, markdown, setMarkdown, setShowMap } =
+    const { markdown, setMarkdown, setShowMap } =
         useContext(DataContext);
     const click = async (t = '') => {
         setLoading(true)
@@ -163,7 +171,7 @@ const Chart = () => {
                     ),
                     direction: select[0],
                     left,
-                    topic: file? `<img src="${URL.createObjectURL(file)}" alt="" width="100px" height="100px" style="
+                    topic: file ? `<img src="${URL.createObjectURL(file)}" alt="" width="100px" height="100px" style="
     
     max-width: 100px;
     pointer-events: none;
@@ -172,11 +180,11 @@ const Chart = () => {
 ">`+ inputText.replace(
                         inputText.charAt(0),
                         inputText.charAt(0).toUpperCase()
-                        ) : inputText.replace(
-                            inputText.charAt(0),
-                            inputText.charAt(0).toUpperCase()
-                        ), // .replace(title.charAt(0), title.charAt(0).toUpperCase()),
-                    
+                    ) : inputText.replace(
+                        inputText.charAt(0),
+                        inputText.charAt(0).toUpperCase()
+                    ), // .replace(title.charAt(0), title.charAt(0).toUpperCase()),
+
                 },
             ]);
 
@@ -194,6 +202,24 @@ const Chart = () => {
             setShow(false)
         }
     }, [select]);
+    const addMyDocs = async (maps) => {
+        await axios.post(`/api/mindmaps/addmap?user=${user.email}`, (maps), {
+            timeout: 300000
+        })
+    }
+    useEffect(() => {
+        if (markdown.length && !maps.includes(markdown)) {
+            let newMaps = [...maps.filter(i => i.topic !== markdown.filter(i => i.id === 'root')[0].topic), {
+                topic: markdown.filter(i => i.id === 'root')[0].topic,
+                user: user.email,
+                data: markdown,
+                created_at: maps.filter(i => i.topic === markdown.filter(i => i.id === 'root')[0]).length ? maps.filter(i => i.topic === markdown.filter(i => i.id === 'root')[0])[0].created_at : new Date().getTime(),
+                updated_at: new Date().getTime()
+            }]
+            setMaps(newMaps)
+            addMyDocs(newMaps)
+        }
+    }, [markdown])
 
     return (
         <>
@@ -203,6 +229,25 @@ const Chart = () => {
                     <Header />
 
                     <div className='flex flex-col relative z-10 justify-between '>
+                        {maps.length ?
+                            <div className='flex self-start bg-white rounded-br-xl shadow-[1px_7px_8px_black] absolute px-[15px]  pt-[2px]'>
+                                Use an existing:
+                                {maps.sort(function (a, b) {
+                                    return b.created_at - a.created_at
+                                }).map((i, idx) => (
+                                    <div key={idx} className='cursor-pointer' onClick={() => {
+                                        setLoad(true)
+                                        setData(i.data);
+
+                                        setTimeout(() => {
+                                            setLoad(false)
+
+                                        }, 300);
+                                    }}>{idx !== maps.length - 1 ? `${i.topic}, ` : i.topic}</div>
+                                ))}
+                            </div>
+                            : null}
+
                         <div className='flex self-end bg-white rounded-bl-xl shadow-[1px_7px_8px_black] absolute px-[16px_35px] pt-[2px]'>
 
                             <div className="relative" data-te-dropdown-ref >
@@ -239,40 +284,6 @@ const Chart = () => {
                             </div>
 
                         </div>
-                        {/*<div className='flex flex-col justify-center items-center  '>
-                            <div className='flex items-center gap-x-4 mb-6'>
-                                <div>
-                                    <Image src="/images/Profile.svg" width={50} height={50} alt='' />
-                                </div>
-                                <div className='text-[16px] text-[#625BF7] font-bold'>Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</div>
-                            </div>
-                            <div className='bg-[#03003D] mb-6 py-[34px] gap-y-28 px-[50px] rounded-[10px] items-center flex flex-col justify-center'>
-                                <div className='flex justify-around gap-x-[250px] '>
-                                    <div className='bg-[#46F7B7] rounded-[10px] p-[20px]'>
-                                        <p className='text-center'>Worem ipsum dolor sit <br />
-                                            amet, consectetur <br />
-                                            adipiscing elit.</p>
-                                    </div>
-                                    <div className='bg-[#1B3CE9] rounded-[10px] p-[20px]'>
-                                        <p className='text-center'>Worem ipsum dolor sit <br />
-                                            amet, consectetur <br />
-                                            adipiscing elit.</p>
-                                    </div>
-                                </div>
-                                <div className='flex justify-around gap-x-[250px] '>
-                                    <div className='bg-[#FFA775] rounded-[10px] p-[20px]'>
-                                        <p className='text-center'>Worem ipsum dolor sit <br />
-                                            amet, consectetur <br />
-                                            adipiscing elit.</p>
-                                    </div>
-                                    <div className='bg-[#CC0707] rounded-[10px] p-[20px]'>
-                                        <p className='text-center'>Worem ipsum dolor sit <br />
-                                            amet, consectetur <br />
-                                            adipiscing elit.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            </div>*/}
 
                     </div>
 
@@ -282,7 +293,7 @@ const Chart = () => {
                                 <Mindmap select={select} setSelect={setSelect} options={options} showMap={true} mind={mind} data={data} topic={topic} />
                                 {show && (
                                     <div className={`bg-white p-4 shadow-[1px_4px_8px_black] rounded flex flex-col gap-5 absolute max-w-[450px] min-h-[300px] w-full z-10`} style={{ top: '30vh', left: '20vw' }}>
-                                        
+
                                         <div className='relative justify-between flex'><div className="absolute z-50 text-white text-xl font-bold rounded-full bg-red-500 w-10 h-10 flex items-center justify-center cursor-pointer" style={{ top: '-25px', right: '-30px' }} onClick={() => {
 
                                             setInputText('')

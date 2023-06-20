@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Search from './Search'
 import Header from './Header'
+import { UserContext } from "./_app";
 import Side from './Side'
 import { MdEdit } from "react-icons/md";
 import Image from "next/image";
 import { Configuration, OpenAIApi } from 'openai';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 
 const Project = () => {
@@ -13,6 +15,13 @@ const Project = () => {
     const [open, setOpen] = useState(false);
     const [load, setLoad] = useState(false)
     const [topic, setTopic] = useState('');
+    const router = useRouter()
+    const { user, setUser } = useContext(UserContext)
+    useEffect(() => {
+        if (!user) {
+            router.replace(`/signin`)
+        }
+    }, [user])
     const handleClick = async () => {
 
         if (topic !== '') {

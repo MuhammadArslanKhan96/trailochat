@@ -1,9 +1,33 @@
 import Image from "next/image";
-import React from "react";
-
+import React, { useContext } from "react";
+import { BsGoogle } from "react-icons/bs";
+import { UserContext } from '@/pages/_app'
+import { useEffect } from "react";
+import { auth } from "@/libs/firebase";
+import login from "@/libs/login";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { useRouter } from "next/router";
 
 
 const Signin = () => {
+    const router = useRouter()
+    const { user, setUser } = useContext(UserContext)
+    useEffect(() => {
+        if (user) {
+            router.replace(`/mindmap`)
+        }
+    }, [user])
+    const signin = async () => {
+        let provider = new GoogleAuthProvider()
+        signInWithPopup(auth, provider)
+            .then(async (result) => {
+                const user = await result.user;
+                setUser({ email: user.email, image: user.providerData[0].photoURL, id: user.uid, name: user.displayName })
+                login(user)
+            }).catch((error) => {
+                console.error(error)
+            });
+    }
 
     return (
         <>
@@ -47,7 +71,13 @@ const Signin = () => {
                             Forget your password?
                         </div>
 
-
+                        <div onClick={signin} className="flex justify-center gap-x-2 px-[55px] py-[18px] items-center 
+                             rounded-[50px] shadow-[0px_15px_50px_rgba(222,95,143,0.12)] bg-gradient-to-r from-[#E5E3E0]  to-[#625BF7] ">
+                            <div className="text-white items-center text-[16px]">
+                                <BsGoogle />
+                            </div>
+                            <div className="text-[#FFFFFF] text-[16px] font-medium">Sign in with Google Account</div>
+                        </div>
 
 
                     </div>

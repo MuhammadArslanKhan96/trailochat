@@ -1,15 +1,21 @@
 import React, { useEffect, useRef } from "react";
-import { parse } from "@/libs/commonParser";
 import jsmind from "./js/jsmind";
 import { useContext } from "react";
 import { DataContext } from "../_app";
-export default function Mindmap({ options, mind, data, topic,select,setSelect }) {
+export default function Mindmap({
+  options,
+  mind,
+  data,
+  topic,
+  select,
+  setSelect,
+}) {
   const { showMap, markdown, setMarkdown, setShowMap } =
     useContext(DataContext);
   const jm = useRef();
   const ref = useRef();
   useEffect(() => {
-    setMarkdown(parse(data, topic, true));
+    setMarkdown(data);
     // eslint-disable-next-line
   }, []);
 
@@ -49,10 +55,13 @@ export default function Mindmap({ options, mind, data, topic,select,setSelect })
           }}
         ></div>
       )}
-      <button onClick={() => {
-        jsmind.shoot(jsmind)
-      }}>Export</button>
-
+      <button
+        onClick={() => {
+          jsmind.shoot(jsmind);
+        }}
+      >
+        Export
+      </button>
     </>
   );
 }
