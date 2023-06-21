@@ -204,7 +204,7 @@ const Chart = () => {
         }
     }, [select]);
     const addMyDocs = async (maps) => {
-        await axios.post(`/api/mindmaps/addmap?user=${user.email}`, (maps), {
+        await axios.post(`/api/mindmaps/addmap?user=${user.id}`, (maps), {
             timeout: 300000
         })
     }
@@ -212,7 +212,7 @@ const Chart = () => {
         if (markdown.length && !maps.includes(markdown)) {
             let newMaps = [...maps.filter(i => i.topic !== markdown.filter(i => i.id === 'root')[0].topic), {
                 topic: markdown.filter(i => i.id === 'root')[0].topic,
-                user: user.email,
+                user: user.id,
                 data: markdown,
                 created_at: maps.filter(i => i.topic === markdown.filter(i => i.id === 'root')[0]).length ? maps.filter(i => i.topic === markdown.filter(i => i.id === 'root')[0])[0].created_at : new Date().getTime(),
                 updated_at: new Date().getTime()

@@ -6,6 +6,7 @@
 html,
 body {
   font-size: 12px;
+  scroll-behavior: smooth;
 }
 #mmap-root {
   background-color: #efefef;

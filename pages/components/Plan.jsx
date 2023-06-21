@@ -1,10 +1,50 @@
 import React from "react";
 import Image from "next/image";
+import { UserContext } from "../_app";
+import { useRouter } from "next/router";
+import axios from "axios";
 
 const Plan = () => {
+  const { user, setUser } = React.useContext(UserContext);
+  const router = useRouter();
+  const createPlan = async (tier) => {
+    if (user) {
+      const { data } = await axios.post(`/api/create_session`, {
+        plan: tier,
+      });
+      localStorage.setItem("transaction", "true");
+      router.replace(data);
+    } else {
+      router.replace("/signin");
+    }
+  };
+
+  React.useEffect(() => {
+    async function init() {
+      setUser((pre) => ({ ...pre, tier: router.query.product }));
+      await axios.post(`/api/updateUser`, {
+        id: user.id,
+        tier: router.query.product,
+      });
+      localStorage.setItem("transaction", "false");
+    }
+    if (
+      user &&
+      router &&
+      router.query.success &&
+      localStorage.getItem("transaction") === "true"
+    ) {
+      init();
+    }
+    // eslint-disable-next-line
+  }, [router, user]);
+
   return (
     <>
-      <div className="flex justify-center flex-col py-[55px]  bg-[#F4F4F4]">
+      <div
+        id="pricing"
+        className="flex justify-center flex-col py-[55px]  bg-[#F4F4F4]"
+      >
         <div className="flex flex-col text-center pb-[55px] ">
           <p className="text-[40px] self-center font-bold  ">
             Choose Your Plan
@@ -16,7 +56,6 @@ const Plan = () => {
         <div className="flex justify-center gap-x-5">
           <div className="flex gap-x-5 items-center">
             <div>
-              {" "}
               <p className="text-[20px] font-semibold"> Monthly</p>{" "}
             </div>
 
@@ -93,7 +132,16 @@ const Plan = () => {
               </ul>
               <button
                 type="button"
-                className="text-white font-bold mt-[30px] bg-[#1A2CB4] rounded-[10px] text-[25px] px-5 py-2.5 inline-flex justify-center w-full text-center"
+                disabled={user && user.tier === "Free"}
+                className={
+                  "text-white font-bold mt-[30px] bg-[#1A2CB4] rounded-[10px] text-[25px] px-5 py-2.5 inline-flex justify-center w-full text-center" +
+                  ` ${
+                    user && user.tier === "Free"
+                      ? "cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`
+                }
+                onClick={() => router.replace("/signin")}
               >
                 Start Free Trial
               </button>
@@ -178,8 +226,17 @@ const Plan = () => {
               </ul>
               <div className="pb-[20px]">
                 <button
+                  disabled={user && user.tier === "Pro"}
                   type="button"
-                  className="text-white font-bold   bg-[#1A2CB4] rounded-[10px] text-[22px] px-5 py-2.5 inline-flex justify-center w-full text-center"
+                  className={
+                    "text-white font-bold   bg-[#1A2CB4] rounded-[10px] text-[22px] px-5 py-2.5 inline-flex justify-center w-full text-center" +
+                    ` ${
+                      user && user.tier === "Pro"
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer"
+                    }`
+                  }
+                  onClick={() => createPlan("Pro")}
                 >
                   Upgrade tp Premium
                 </button>
@@ -261,8 +318,17 @@ const Plan = () => {
                 </li>
               </ul>
               <button
+                disabled={user && user.tier === "Standard"}
                 type="button"
-                className="text-white font-bold mt-[30px] bg-[#1A2CB4] rounded-[10px] text-[20px] px-5 py-2.5 inline-flex justify-center w-full text-center"
+                className={
+                  "text-white font-bold mt-[30px] bg-[#1A2CB4] rounded-[10px] text-[20px] px-5 py-2.5 inline-flex justify-center w-full text-center" +
+                  ` ${
+                    user && user.tier === "Standard"
+                      ? "cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`
+                }
+                onClick={() => createPlan("Standard")}
               >
                 Start Free Trial
               </button>

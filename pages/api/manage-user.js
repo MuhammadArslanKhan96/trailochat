@@ -9,7 +9,7 @@ const addUser = async (
 ) => {
     try {
         const document = await db.collection('users').doc(user.id).set({
-            ...user, tier: ''
+            ...user, tier: 'Free'
         })
         return document;
     } catch (e) {
@@ -32,8 +32,8 @@ const getUser = async (uid) => {
 export default async function handler(req, res) {
     if (req.method === 'GET') {
         try {
-            const { id, image, name, email } = req.query;
-            const user = { id, image, name, email }
+            const { id, image, name, email, password } = req.query;
+            const user = { id, image, name, email, password }
             const token = await admin.auth().createCustomToken(id);
 
             const docSnap = await getUser(user.id);

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 import { useContext } from 'react'
 import { UserContext } from '@/pages/_app'
+import Profile from "@/public/images/profile.png";
 import { auth } from '@/libs/firebase'
 import Image from 'next/image'
 const Header = () => {
@@ -15,8 +16,8 @@ const Header = () => {
                         auth.signOut();
                         setUser(undefined)
                     }}>
-                        <div className='text-black text-[16px] font-bold'>{user.name}</div>
-                        <Image src={user.image} alt='' width={50} height={50} className='bg-[#D9D9D9] rounded-full w-[50px] h-[50px]'></Image>
+                        <div className='text-black text-[16px] font-bold'>{user.name === 'null' ? 'User' : user.name}</div>
+                        <Image src={user.image === 'null' ? Profile.src : user.image} alt='' width={50} height={50} className='bg-[#D9D9D9] rounded-full w-[50px] h-[50px]'></Image>
                     </div>
                 </div> : <Link href="/signin">
                     <div className='flex gap-x-4 items-center'>

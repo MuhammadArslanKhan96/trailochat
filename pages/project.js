@@ -8,6 +8,7 @@ import Image from "next/image";
 import { Configuration, OpenAIApi } from 'openai';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 
 
 const Project = () => {
@@ -16,13 +17,32 @@ const Project = () => {
     const [load, setLoad] = useState(false)
     const [topic, setTopic] = useState('');
     const router = useRouter()
-    const { user, setUser } = useContext(UserContext)
+    const { user, trelloTickets, setTrelloTickets } = useContext(UserContext)
     useEffect(() => {
         if (!user) {
             router.replace(`/signin`)
         }
         // eslint-disable-next-line
     }, [user])
+    const addMyDocs = async (tickets) => {
+        await axios.post(`/api/trellotickets/addtrello?user=${user.id}`, (tickets), {
+            timeout: 300000
+        })
+    };
+    useEffect(() => {
+        if (data && !trelloTickets.includes(data)) {
+            let newtrello = [...trelloTickets.filter(i => i.topic !== data.topic), {
+                topic: data.topic,
+                user: user.id,
+                data: data,
+                created_at: trelloTickets.filter(i => i.topic === data.topic).length ? trelloTickets.filter(i => i.topic === data.topic)[0].created_at : new Date().getTime(),
+                updated_at: new Date().getTime()
+            }]
+            setTrelloTickets(newtrello)
+            addMyDocs(newtrello)
+        }
+        // eslint-disable-next-line
+    }, [data])
     const handleClick = async () => {
 
         if (topic !== '') {
@@ -57,10 +77,28 @@ const Project = () => {
                 <div className='w-[80%] overflow-hidden h-screen relative flex flex-col scrollStyle'>
                     <Header />
 
-                    <div className='flex flex-col justify-between '>
+                    <div className='flex flex-col justify-between'>{trelloTickets.length ?
+                        <div className='flex self-start bg-white rounded-br-xl shadow-[1px_7px_8px_black] absolute px-[15px]  pt-[2px]'>
+                            Use an existing:
+                            {trelloTickets.sort(function (a, b) {
+                                return b.created_at - a.created_at
+                            }).map((i, idx) => (
+                                <div key={idx} className='cursor-pointer' onClick={() => {
+                                    setLoad(true)
+                                    setData(i.data);
+
+                                    setTimeout(() => {
+                                        setLoad(false)
+
+                                    }, 300);
+                                }}>{idx !== trelloTickets.length - 1 ? `${i.topic}, ` : i.topic}</div>
+                            ))}
+                        </div>
+                        : null}
                         <div className='flex justify-between px-[90px] py-[20px]'>
+
                             <div className='flex items-center gap-x-3'>
-                                <div className='text-[#625BF7] font-bold'>Project Name</div>
+                                <div className='text-[#625BF7] font-bold'>{data ? data.topic : 'Project Name'}</div>
                                 <div className='text-[#625BF7]'><MdEdit /></div>
                             </div>
                             <div className="relative " data-te-dropdown-ref>
@@ -102,7 +140,7 @@ const Project = () => {
                                     <div className='bg-[#DDDFE7] p-[16px] rounded-[4px]'>
                                         <div className='text-[18px] py-[10px]'>{column.topic || column.name || column}</div>
                                         <div className="flex flex-col overflow-y-scroll scrollStyle max-h-[50vh] gap-y-3">
-                                            {column.subtopics.length ? column.subtopics.map((item, index) => (<div className="p-[24px]  bg-white rounded-lg" key={index}>
+                                            {column.subtopics && column.subtopics.length ? column.subtopics.map((item, index) => (<div className="p-[24px]  bg-white rounded-lg" key={index}>
                                                 <div className="flex justify-between gap-x-40">
                                                     <div className="flex flex-col gap-y-[14px]">
                                                         <div className='bg-[#46F7B7] px-[8px] w-fit rounded-[2px] py-[2px]'>

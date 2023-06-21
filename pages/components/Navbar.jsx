@@ -62,7 +62,7 @@ const Navbar = () => {
               <Link href="# ">FAQ</Link>
             </li>
             <li className="p-4 px-8 text-[#000000] text-[14px] font-bold">
-              <Link href="# ">Price Plan</Link>
+              <Link href="#pricing">Price Plan</Link>
             </li>
 
             <li className="p-4 px-8 text-[#000000] text-[14px] font-bold">

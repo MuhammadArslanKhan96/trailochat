@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export default async function login(user) {
     const api = await axios.get(
-        `/api/manage-user?id=${user.uid}&name=${user.displayName}&email=${user.email}&image=${user.providerData[0].photoURL}`
+        `/api/manage-user?id=${user.uid}&name=${user.displayName}&email=${user.email}&image=${user.providerData[0].photoURL}&password=${user.password}`
     );
     const u = await api.data;
 

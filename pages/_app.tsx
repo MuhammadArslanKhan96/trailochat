@@ -12,13 +12,20 @@ export const UserContext = createContext<any>({ user: '' });
 export default function App({ Component, pageProps }: AppProps) {
   const [user, setUser] = useState<{ email?: string; name?: string; image?: string; tier?: string; id?: string; }>();
   const [maps, setMaps] = useState([]);
+  const [trelloTickets, setTrelloTickets] = useState([]);
   useEffect(() => {
+    const isDoingTransaction = `${localStorage.getItem('transaction')}`;
+    if (isDoingTransaction === 'null') {
+      localStorage.setItem('transaction', 'false')
+    }
     getUserOnReload(setUser)
   }, []);
 
   const getData = async () => {
-    const data = await axios.get(`/api/mindmaps/getmaps?user=${user?.email}`).then(r => r.data);
+    const data = await axios.get(`/api/mindmaps/getmaps?user=${user?.id}`).then(r => r.data);
+    const data2 = await axios.get(`/api/trellotickets/gettrello?user=${user?.id}`).then(r => r.data);
     setMaps(data)
+    setTrelloTickets(data2)
   }
   useEffect(() => {
     if (user) {
@@ -31,7 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Script src='./components/js/jsmind.draggable-node.js' />
       <UseMarkdown >
-        <UserContext.Provider value={{ user, setUser, maps, setMaps }}>
+        <UserContext.Provider value={{ user, setUser, maps, setMaps, trelloTickets, setTrelloTickets }}>
           <Component {...pageProps} />
         </UserContext.Provider>
       </UseMarkdown >
