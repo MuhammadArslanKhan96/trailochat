@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const TrelloPopup = ({ popup, setData, data, setPopup }) => {
   const [topic, setTopic] = useState(
-    popup && popup.length ? popup[1].topic : ""
+    popup && popup.length ? popup[1].topic || popup[1].name : ""
   );
   const coverRef = useRef();
   const attatchmentRef = useRef();
@@ -50,7 +50,7 @@ const TrelloPopup = ({ popup, setData, data, setPopup }) => {
         <p className="select-none">
           in list{" "}
           <span className="font-medium underline cursor-pointer">
-            {popup[0].topic}
+            {popup[0].topic || popup[0].name}
           </span>
         </p>
       </div>

@@ -1,25 +1,28 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import Search from './Search'
-import Header from './Header'
-import { RxCross1 } from 'react-icons/rx';
-import { UserContext } from "./_app";
-import Side from './Side'
-import { MdEdit } from "react-icons/md";
+import axios from 'axios';
 import Image from "next/image";
-import { Configuration, OpenAIApi } from 'openai';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import axios from 'axios';
+import { Configuration, OpenAIApi } from 'openai';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { DragDropContext } from "react-beautiful-dnd";
+import { MdEdit } from "react-icons/md";
+import { RxCross1 } from 'react-icons/rx';
 import { v4 as uuidv4 } from "uuid";
-import TrelloPopup from './components/TrelloPopup';
 import useOutside from '../hooks/useOutside';
-
+import Header from './Header';
+import Search from './Search';
+import Side from './Side';
+import { StrictModeDroppable } from './StrictModeDroppable';
+import { UserContext } from "./_app";
+import Column from './components/Column';
+import TrelloPopup from './components/TrelloPopup';
 
 const Project = () => {
     const [data, setData] = useState()
     const [open, setOpen] = useState(false);
     const [load, setLoad] = useState(false)
     const [topic, setTopic] = useState('');
+    const [subtopicIds, setSubtopicIds] = useState([]);
     const [createPopup, setCreatePopup] = useState('');
     const [popup, setPopup] = useState(false);
     const [input, setInput] = useState('');
@@ -46,10 +49,10 @@ const Project = () => {
             let newtrello = [...trelloTickets.filter(i => i.mapId !== data.mapId), {
                 ...trelloTickets.filter(i => i.mapId === data.mapId)[0],
                 topic: input ? input : data.topic,
-                data: data,
+                data: { ...data, subtopicsIds: subtopicIds },
                 updated_at: new Date().getTime(),
                 user: user.id,
-                mapId: data.mapId
+                mapId: data.mapId,
             }]
             setTrelloTickets(newtrello.filter((obj, index) => {
                 return index === newtrello.findIndex((o) => obj.mapId === o.mapId);
@@ -59,7 +62,7 @@ const Project = () => {
             }))
         }
         // eslint-disable-next-line
-    }, [data]);
+    }, [data, subtopicIds]);
     const handleClick = async () => {
 
         if (topic !== '') {
@@ -79,12 +82,25 @@ const Project = () => {
                 const str = response.data.choices[0].message.content;
 
                 const int = JSON.parse(str);
-                setData({
+                let subtopicsIds = [];
+                const newData = {
                     ...int, mapId: newId, subtopics: int.subtopics.map(i => {
                         count++
-                        return ({ ...i, created_at: count })
+                        let subsubtopicsIds = [];
+                        let id = uuidv4();
+                        subtopicsIds.push(id)
+                        return ({
+                            ...i, created_at: count, keys: id, subsubtopicIds: subsubtopicsIds, subtopics: i.subtopics.map(i => {
+
+                                let sid = uuidv4();
+                                subsubtopicsIds.push(sid)
+                                return ({ ...i, keys: sid })
+                            })
+                        })
                     })
-                })
+                };
+                setSubtopicIds(subtopicsIds)
+                setData({ ...newData, subtopicsIds })
                 setLoad(false)
             } catch (error) {
                 setLoad(false)
@@ -93,6 +109,7 @@ const Project = () => {
         }
     }
 
+
     useEffect(() => {
         if (router && router.query.topic && trelloTickets.length) {
             setLoad(true);
@@ -100,10 +117,60 @@ const Project = () => {
             setData({
                 ...trelloTickets.filter(i => i.mapId === router.query.topic)[0].data, mapId: router.query.topic
             });
+            setSubtopicIds(trelloTickets.filter(i => i.mapId === router.query.topic)[0].data.subtopicsIds)
             setLoad(false)
         }
         // eslint-disable-next-line
-    }, [router])
+    }, [router]);
+
+
+    const reorder = (list, startIndex, endIndex) => {
+        const result = Array.from(list);
+        const [removed] = result.splice(startIndex, 1);
+        result.splice(endIndex, 0, removed);
+
+        return result;
+    };
+
+
+
+    const onDragEnd = (result) => {
+        let newOrder = subtopicIds;
+        if (result.combine) {
+            if (result.type === "COLUMN") {
+                const shallow = [...subtopicIds];
+                shallow.splice(result.source.index, 1);
+                newOrder = (shallow);
+                return;
+            }
+        }
+
+        // dropped nowhere
+        if (!result.destination) {
+            return;
+        }
+
+        const source = result.source;
+        const destination = result.destination;
+
+        // did not move anywhere - can bail early
+        if (
+            source.droppableId === destination.droppableId &&
+            source.index === destination.index
+        ) {
+            return;
+        }
+
+        // reordering column
+        if (result.type === "COLUMN") {
+            const reorderedorder = reorder(newOrder, source.index, destination.index);
+
+            setSubtopicIds(reorderedorder);
+
+            return;
+        }
+
+    };
 
     return (
         <>
@@ -156,91 +223,61 @@ const Project = () => {
 
                         </div>
                         <div className='flex justify-start h-[80vh] pr-16 lg:ml-14 overflow-x-scroll gap-x-7 scrollStyle'>
-                            {data && !load ? <>{data.subtopics.sort(function (a, b) {
-                                return b.created_at - a.created_at
-                            }).map((column, idx) => (
-                                <div className='flex items-start justify-center ' key={idx}>
-                                    <div className='bg-[#DDDFE7] relative p-[16px] min-w-[16rem] max-w-[16rem] rounded-[4px]'>
-                                        <div className='text-[18px] py-[10px]'>
+                            {data && !load ? <>
+                                <DragDropContext onDragEnd={onDragEnd}>
+                                    <StrictModeDroppable
+                                        droppableId="board"
+                                        type="COLUMN"
+                                        direction="horizontal"
+                                    >
+                                        {(provided) => (
+                                            <div className={'flex gap-x-7 '} ref={provided.innerRef} {...provided.droppableProps}>
+                                                {subtopicIds.map((column, idx) => {
 
-                                            <input className='bg-transparent text-[18px] w-48 absolute top-3 z-10 outline-none focus:outline-none focus:border-none' type="text" value={column.topic || column.name} onChange={e => {
-                                                // setSelected(e.target.value)
-                                                setData({
-                                                    ...data, subtopics: [...data.subtopics.filter((i) => (i.topic !== column.topic || i.name !== column.name || i !== column)), {
-                                                        ...data.subtopics.filter((i) => (i.topic === column.topic || i.name === column.name || i === column))[0],
-                                                        name: e.target.value, topic: e.target.value,
-                                                    }]
-                                                })
-                                            }} />
-                                        </div>
+                                                    return (
+                                                        <>
+                                                            <Column
+                                                                setPopup={setPopup}
+                                                                key={column}
+                                                                keys={idx}
+                                                                setCreatePopup={setCreatePopup} setData={setData} column={column} data={data} />
+                                                        </>
 
-                                        <div className="flex flex-col overflow-y-scroll scrollStyle max-h-[60vh] mt-4 gap-y-3">
-                                            {column.subtopics && column.subtopics.length ? column.subtopics.map((item, index) => (
-                                                <div className="px-4 py-2 bg-white rounded-lg cursor-pointer" onClick={() => {
-                                                    setPopup([column, item])
-                                                }} key={index}>
-                                                    {/* <div className="flex justify-between gap-x-40"> */}
-                                                    <div className="flex flex-col gap-y-[14px]">
-                                                        {/* <div className='bg-[#46F7B7] px-[8px] w-fit rounded-[2px] py-[2px]'>
-                                                            <p className="text-[10px] font-bold text-[#096343]">low priority</p> </div> */}
-                                                        {/* <div className='flex flex-col gap-y-3'> */}
-                                                        {item && item.cover ? <div className='flex items-center justify-center'><Image src={item.cover} width={50} height={50} className='w-full h-w-full ' alt='' /></div> : null}
-                                                        <p className="text-[14px] break-words max-w-[12rem] text-[#1B1C1D]">
-                                                            {item.topic || item.name || item}
-                                                        </p>
-                                                        {/* </div> */}
-
-                                                        {/* <div className='bg-[#F7F7F7] gap-x-2 rounded-[2px] w-fit flex px-[8px] py-[6px]'>
-                                                            <div>
-                                                                <Image src="/images/calendar_today.svg" width={10} height={11} alt='' />
-                                                            </div>
-                                                            <div className='text-[#646570] text-[10px]'>Jan 29th, 2022 </div>
-                                                        </div> */}
-                                                    </div>
-
-                                                    {/* </div> */}
-
-                                                </div>)) : null}
-                                            <div className="px-[24px] cursor-pointer py-2 bg-white rounded-lg" onClick={() => {
-                                                setCreatePopup(column.topic)
-                                            }}>
-                                                <div className='flex justify-center gap-x-1 items-center'> <p className="text-[14px] text-[#1B1C1D]">
-                                                    +
-                                                </p> <p>Add a task</p></div>
-
+                                                    )
+                                                })}
+                                                {provided.placeholder}
 
                                             </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            ))}
-
-
-                                <button className='px-4 py-2 min-w-fit gap-1.5 bg-blue-400 text-white h-fit rounded text-sm w-full flex justify-between items-start' onClick={function () {
+                                        )}
+                                    </StrictModeDroppable>
+                                </DragDropContext>
+                                <button className='px-8 py-3  gap-1.5 bg-blue-400 text-white min-w-fit h-fit rounded text-sm flex justify-between items-center' onClick={function () {
+                                    const id = uuidv4()
                                     setData(pre => ({
                                         ...pre, subtopics: [...pre.subtopics, {
-                                            topic: 'Title'
+                                            topic: 'Title',
+                                            created_at: pre.subtopics[pre.subtopics.length - 1].created_at,
+                                            keys: id,
                                         }]
-                                    }))
+                                    }));
+
+                                    setSubtopicIds(pre => ([...pre, id]))
                                 }}>
                                     <p>+</p>
                                     <p>Add another list</p>
                                 </button>
-
-
-
-                            </> : <div
-                                style={{
-                                    width: "100%",
-                                    height: "70%",
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '2.4rem',
-                                    fontWeight: 'bold',
-                                    textTransform: 'uppercase'
-                                }}>{!load && !data ? 'Enter Topic In the Input 🤔' : 'Loading...'}</div>}
+                            </>
+                                : <div
+                                    style={{
+                                        width: "100%",
+                                        height: "70%",
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '2.4rem',
+                                        fontWeight: 'bold',
+                                        textTransform: 'uppercase'
+                                    }}>{!load && !data ? 'Enter Topic In the Input 🤔' : 'Loading...'}</div>}
 
                         </div>
                     </div>
