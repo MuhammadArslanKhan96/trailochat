@@ -54,12 +54,11 @@ const Project = () => {
                 user: user.id,
                 mapId: data.mapId,
             }]
-            setTrelloTickets(newtrello.filter((obj, index) => {
-                return index === newtrello.findIndex((o) => obj.mapId === o.mapId);
-            }))
-            addMyDocs(newtrello.filter((obj, index) => {
-                return index === newtrello.findIndex((o) => obj.mapId === o.mapId);
-            }))
+            let d = newtrello.filter((obj, index) => {
+                return (index === newtrello.findIndex((o) => (obj.mapId === o.mapId)));
+            })
+            setTrelloTickets(d)
+            addMyDocs(d)
         }
         // eslint-disable-next-line
     }, [data, subtopicIds]);
