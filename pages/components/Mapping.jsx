@@ -21,7 +21,12 @@ const Mapping = () => {
             </div>
           </div>
           <div>
-            <Image src="/images/mapping.svg" width={509} height={350} alt="" />
+            <Image
+              src="/images/aimindmap.jpg"
+              width={509}
+              height={350}
+              alt=""
+            />
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@ const Ultimate = () => {
         </div>
         <div className="flex justify-center gap-x-10   ">
           <div>
-            <Image src="/images/ultimate.svg" width={700} height={400} alt="" />
+            <Image src="/images/ultimate.png" width={700} height={400} alt="" />
           </div>
           <div className="flex flex-col">
             <p className="text-[50px] font-bold pb-[21px] drop-shadow-[7px_3px_20px_rgba(0,0,0,0.25)]">

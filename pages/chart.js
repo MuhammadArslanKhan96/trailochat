@@ -22,7 +22,9 @@ const Chart = () => {
     const [select, setSelect] = useState([]);
     const [topic, setTopic] = useState('');
     const [loading, setLoading] = useState(false);
+    const [popup, setPopup] = useState(false);
     const [inputText, setInputText] = useState('');
+    const newId = uuidv4()
     const router = useRouter()
     const { user, setMaps, maps } = useContext(UserContext)
     useEffect(() => {
@@ -114,7 +116,7 @@ const Chart = () => {
         },
 
         {
-            text: "Add the card with the text in input",
+            text: "Write text in the above input and add it",
             onclick: "card",
             check: true
         },
@@ -160,6 +162,7 @@ const Chart = () => {
             setMarkdown(d);
 
         } else {
+            setPopup(true)
             setShowMap(false)
             setMarkdown((pre) => [
                 ...pre,
@@ -215,13 +218,23 @@ const Chart = () => {
                 user: user.id,
                 data: markdown,
                 created_at: maps.filter(i => i.topic === markdown.filter(i => i.id === 'root')[0]).length ? maps.filter(i => i.topic === markdown.filter(i => i.id === 'root')[0])[0].created_at : new Date().getTime(),
-                updated_at: new Date().getTime()
+                updated_at: new Date().getTime(),
+                mapId: newId
             }]
             setMaps(newMaps)
             addMyDocs(newMaps)
         }
         // eslint-disable-next-line
-    }, [markdown])
+    }, [markdown]);
+
+    useEffect(() => {
+        if (router && router.query.topic && maps.length) {
+            setShowMap(false)
+            const map = maps.filter(i => i.mapId === router.query.topic)[0]
+            if (map && map.data) setData(map.data);
+        }
+        // eslint-disable-next-line
+    }, [router])
 
     return (
         <>
@@ -231,24 +244,7 @@ const Chart = () => {
                     <Header />
 
                     <div className='flex flex-col relative z-10 justify-between '>
-                        {maps.length ?
-                            <div className='flex self-start bg-white rounded-br-xl shadow-[1px_7px_8px_black] absolute px-[15px]  pt-[2px]'>
-                                Use an existing:
-                                {maps.sort(function (a, b) {
-                                    return b.created_at - a.created_at
-                                }).map((i, idx) => (
-                                    <div key={idx} className='cursor-pointer' onClick={() => {
-                                        setLoad(true)
-                                        setData(i.data);
 
-                                        setTimeout(() => {
-                                            setLoad(false)
-
-                                        }, 300);
-                                    }}>{idx !== maps.length - 1 ? `${i.topic}, ` : i.topic}</div>
-                                ))}
-                            </div>
-                            : null}
 
                         <div className='flex self-end bg-white rounded-bl-xl shadow-[1px_7px_8px_black] absolute px-[16px_35px] pt-[2px]'>
 
@@ -317,10 +313,18 @@ const Chart = () => {
                                             <div className="flex items-center justify-center">
                                                 <Image src={URL.createObjectURL(file)} className="max-w-[200px] max-h-[200px]" alt='' width={200} height={200} />
                                             </div></>}
+                                        <div className="w-full flex justify-center flex-col gap-2 h-fit bg-[#201F20] text-white rounded font-[650] text-xl">
+                                            <div onClick={() => {
+                                                click(opt[opt.length - 1].onclick)
+                                            }} className={`hover:bg-[#443E5E] px-2 pl-4 rounded py-2 ${(inputText.length && !loading) ? 'cursor-pointer ' : 'cursor-not-allowed'}`}>
+                                                {opt[opt.length - 1].text}
+                                            </div>
+                                            {/* {inputText.length && !loading} */}
+                                        </div>
                                         <div className="w-full flex justify-center flex-col gap-2 h-[200px] bg-[#201F20] text-white rounded font-[650] text-xl">
-                                            {opt.map((i, idx) => (
+                                            {opt.map((i, idx) => !i.check && (
                                                 <div onClick={() => {
-                                                    if (!i.check && !loading ? true : inputText.length && !loading) click(i.onclick)
+                                                    click(i.onclick)
                                                 }} key={idx} className={`hover:bg-[#443E5E] px-2 pl-4 rounded py-2 ${(!i.check && !loading ? true : inputText.length && !loading) ? 'cursor-pointer ' : 'cursor-not-allowed'}`}>
                                                     {i.text}
                                                 </div>
