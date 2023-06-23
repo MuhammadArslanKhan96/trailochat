@@ -11,7 +11,7 @@ export default async function handler(
             const collection = db.collection('trellotickets');
             const snapshot = (await citiesRef.get()).docs.map((doc) => ({ ...doc.data(), id: doc.id }));
             const snapshot2 = (await collection.get()).docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-            for (var doc2 of snapshot2) {
+            for (var doc2 of snapshot) {
                 await db.collection('trellotickets').doc(doc2.id).delete();
             }
             for (var doc2 of (req.body)) {
