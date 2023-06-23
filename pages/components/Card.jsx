@@ -3,6 +3,7 @@ import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
 const Card = ({ item, column, key, setPopup, keys, text }) => {
+  if (!column || !text || !item) return;
   return (
     <Draggable draggableId={text} index={keys}>
       {(provided, snapshot) => (

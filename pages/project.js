@@ -12,7 +12,7 @@ import useOutside from '../hooks/useOutside';
 import Header from './Header';
 import Search from './Search';
 import Side from './Side';
-import { StrictModeDroppable } from './StrictModeDroppable';
+import { StrictModeDroppable } from '../libs/StrictModeDroppable';
 import { UserContext } from "./_app";
 import Column from './components/Column';
 import TrelloPopup from './components/TrelloPopup';

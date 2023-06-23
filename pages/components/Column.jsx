@@ -3,7 +3,7 @@ import Card from "./Card";
 import { useEffect } from "react";
 import { DragDropContext, Draggable } from "react-beautiful-dnd";
 import { GrDrag } from "react-icons/gr";
-import { StrictModeDroppable } from "../StrictModeDroppable";
+import { StrictModeDroppable } from "../../libs/StrictModeDroppable";
 const Column = ({
   data,
   column,
@@ -14,11 +14,16 @@ const Column = ({
   setPopup,
 }) => {
   const [subsubtopicIds, setSubsubtopicIds] = useState(
-    data.subtopics.filter((i) => i.keys === column)[0].subtopics
+    data && data.subtopics
+      ? data.subtopics.filter((i) => i.keys === column)[0]?.subtopics
+      : []
   );
-  let column2 = data.subtopics.filter((i) => i.keys === column)[0];
+  let column2 =
+    data && data.subtopics
+      ? data.subtopics.filter((i) => i.keys === column)[0]
+      : "";
   useEffect(() => {
-    setSubsubtopicIds(column2.subtopics);
+    setSubsubtopicIds(column2 ? column2.subtopics : []);
   }, [column2]);
 
   useEffect(() => {
@@ -32,6 +37,7 @@ const Column = ({
         },
       ],
     }));
+    // eslint-disable-next-line
   }, [subsubtopicIds]);
 
   const reorder = (list, startIndex, endIndex) => {
@@ -78,6 +84,7 @@ const Column = ({
       return;
     }
   };
+  if (!data || !column || !subsubtopicIds) return;
   return (
     <Draggable draggableId={column} index={keys}>
       {(provided, snapshot) => (
