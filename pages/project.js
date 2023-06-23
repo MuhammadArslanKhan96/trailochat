@@ -155,7 +155,7 @@ const Project = () => {
                             </div>
 
                         </div>
-                        <div className='flex justify-start h-[80vh] lg:ml-14 overflow-x-scroll gap-x-7 scrollStyle'>
+                        <div className='flex justify-start h-[80vh] pr-16 lg:ml-14 overflow-x-scroll gap-x-7 scrollStyle'>
                             {data && !load ? <>{data.subtopics.sort(function (a, b) {
                                 return b.created_at - a.created_at
                             }).map((column, idx) => (
@@ -217,7 +217,7 @@ const Project = () => {
                             ))}
 
 
-                                <button className='px-4 py-2 bg-blue-400 text-white h-fit rounded text-sm w-full flex justify-between items-start' onClick={function () {
+                                <button className='px-4 py-2 min-w-fit gap-1.5 bg-blue-400 text-white h-fit rounded text-sm w-full flex justify-between items-start' onClick={function () {
                                     setData(pre => ({
                                         ...pre, subtopics: [...pre.subtopics, {
                                             topic: 'Title'
