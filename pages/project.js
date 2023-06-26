@@ -85,7 +85,7 @@ const Project = () => {
                         count++
                         let id = uuidv4();
                         return ({
-                            ...i, created_at: count, keys: id, subtopics: i.subtopics.map(i => {
+                            ...i, created_at: count, id: count, keys: id, subtopics: i.subtopics.map(i => {
 
                                 let sid = uuidv4();
                                 subsubtopicsIds.push(sid)
@@ -168,9 +168,9 @@ const Project = () => {
 
             // Then insert the item at the right location
             newList.splice(destination.index, 0, start.subtopics[source.index])
+            const [removed] = arr.splice(arr.indexOf(start), 1);
+            arr.splice(data.subtopics.indexOf(removed), 0, { ...start, subtopics: newList })
 
-            // Then create a new copy of the column object
-            arr[arr.indexOf(start)] = { ...start, subtopics: newList }
             setData(pre => ({ ...pre, subtopics: arr }));
             return null
         } else {
@@ -194,11 +194,11 @@ const Project = () => {
                 ...end,
                 subtopics: newEndList
             }
-            let arr = [
-                ...data.subtopics.filter(i => (i.keys !== start.keys && i.keys !== end.keys)),
-                newStartCol,
-                newEndCol
-            ]
+            let arr = data.subtopics
+            const [removed] = arr.splice(arr.indexOf(start), 1);
+            arr.splice(data.subtopics.indexOf(removed), 0, newStartCol)
+            const [removedItem] = arr.splice(arr.indexOf(end), 1);
+            arr.splice(data.subtopics.indexOf(removedItem), 0, newEndCol)
             // const ordered = reorder(arr, arr.indexOf(newEndCol), arr.indexOf(newStartCol));
             // Update the state
             setData(state => ({ ...state, subtopics: arr }))
