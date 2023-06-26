@@ -60,16 +60,20 @@ const Column = ({
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    {column.subtopics.map((item, idx) => (
-                      <Card
-                        column={column}
-                        key={item.keys}
-                        keys={item.keys}
-                        item={item}
-                        index={idx}
-                        setPopup={setPopup}
-                      />
-                    ))}
+                    {column.subtopics
+                      .sort(function (a, b) {
+                        return b.index - a.index;
+                      })
+                      .map((item, idx) => (
+                        <Card
+                          column={column}
+                          key={item.keys}
+                          keys={item.keys}
+                          item={item}
+                          index={idx}
+                          setPopup={setPopup}
+                        />
+                      ))}
                     {provided.placeholder}
                   </div>
                 )}

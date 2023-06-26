@@ -82,18 +82,20 @@ const Project = () => {
                 const int = JSON.parse(str);
                 const newData = {
                     ...int, mapId: newId, subtopics: int.subtopics.map(i => {
-                        count++
+                        count++;
+                        let count2 = 0;
                         let id = uuidv4();
                         return ({
-                            ...i, created_at: count, id: count, keys: id, subtopics: i.subtopics.map(i => {
+                            ...i, created_at: count, index: count - 1, keys: id, subtopics: i.subtopics.map(i => {
+                                count2++
 
                                 let sid = uuidv4();
-                                subsubtopicsIds.push(sid)
-                                return ({ ...i, keys: sid })
+                                return ({ ...i, keys: sid, index: count2 })
                             })
                         })
                     })
                 };
+                console.log(newData)
                 setData(newData)
                 setLoad(false)
             } catch (error) {
@@ -120,7 +122,7 @@ const Project = () => {
     const reorder = (list, startIndex, endIndex) => {
         const result = Array.from(list);
         const [removed] = result.splice(startIndex, 1);
-        result.splice(endIndex, 0, removed);
+        result.splice(endIndex, 0, { ...removed, index: endIndex });
 
         return result;
     };
@@ -167,7 +169,7 @@ const Project = () => {
             )
 
             // Then insert the item at the right location
-            newList.splice(destination.index, 0, start.subtopics[source.index])
+            newList.splice(destination.index, 0, { ...start.subtopics[source.index], index: destination.index })
             const [removed] = arr.splice(arr.indexOf(start), 1);
             arr.splice(data.subtopics.indexOf(removed), 0, { ...start, subtopics: newList })
 
@@ -267,14 +269,16 @@ const Project = () => {
                                     >
                                         {(provided) => (
                                             <div className={'flex gap-x-7 '} ref={provided.innerRef} {...provided.droppableProps}>
-                                                {data.subtopics.map((column, idx) => {
+                                                {data.subtopics.sort(function (a, b) {
+                                                    return b.index - a.index
+                                                }).map((column, idx) => {
 
                                                     return (
                                                         <>
                                                             <Column
                                                                 setPopup={setPopup}
                                                                 key={column.keys}
-                                                                keys={idx} onDragEnd={onDragEnd}
+                                                                keys={idx}
                                                                 setCreatePopup={setCreatePopup} setData={setData} column={column} data={data} />
                                                         </>
 
@@ -295,8 +299,6 @@ const Project = () => {
                                             keys: id,
                                         }]
                                     }));
-
-                                    setSubtopicIds(pre => ([...pre, id]))
                                 }}>
                                     <p>+</p>
                                     <p>Add another list</p>
