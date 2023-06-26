@@ -75,18 +75,21 @@ const Plan = () => {
           <div className=" mt-[90px] max-w-sm  bg-white border border-[#353030] rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
             <div className="flex justify-center">
               <h5 className=" text-[37px] font-bold   text-[#000000]">
-                Free trial
+                Basic Package
               </h5>
             </div>
             <div className="px-[40px]">
-              <div className="flex justify-center items-center text-gray-900 ">
+              {/* <div className="flex justify-center items-center text-gray-900 ">
                 <span className="text-[35px] font-bold">$</span>
                 <span className="text-[35px] font-bold tracking-tight">0</span>
                 <span className=" text-[20px] font-normal mt-2">/MO</span>
-              </div>
+              </div> */}
               <div className="flex justify-center flex-col py-[20px] text-[20px] text-center">
-                <p>Get a taste of our AI mind</p>
-                <p>mapping tool with our free trial</p>
+                <p>
+                  Get a taste of our AI mind mapping tool with our basic
+                  package.
+                </p>
+                {/* <p>mapping tool with our free trial</p> */}
               </div>
               <ul role="list" className="space-y-5  my-10">
                 <li className="flex space-x-3 items-center">
@@ -143,7 +146,7 @@ const Plan = () => {
                 }
                 onClick={() => router.replace("/signin")}
               >
-                Start Free Trial
+                Try Now!
               </button>
             </div>
           </div>
@@ -257,8 +260,11 @@ const Plan = () => {
                 <span className=" text-[20px] font-normal mt-2">/month</span>
               </div>
               <div className="flex justify-center flex-col py-[20px] text-[20px] text-center">
-                <p>Get a taste of our AI mind</p>
-                <p>mapping tool with our free trial</p>
+                <p>
+                  With our standard package, take your mind mapping to the next
+                  level.
+                </p>
+                {/* <p>mapping tool with our free trial</p> */}
               </div>
               <ul role="list" className="space-y-5 my-7">
                 <li className="flex space-x-3 items-center">
@@ -330,7 +336,7 @@ const Plan = () => {
                 }
                 onClick={() => createPlan("Standard")}
               >
-                Start Free Trial
+                Choose Standard{" "}
               </button>
             </div>
           </div>
