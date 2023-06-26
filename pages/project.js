@@ -22,7 +22,6 @@ const Project = () => {
     const [open, setOpen] = useState(false);
     const [load, setLoad] = useState(false)
     const [topic, setTopic] = useState('');
-    const [subtopicIds, setSubtopicIds] = useState([]);
     const [createPopup, setCreatePopup] = useState('');
     const [popup, setPopup] = useState(false);
     const [input, setInput] = useState('');
@@ -49,7 +48,7 @@ const Project = () => {
             let newtrello = [...trelloTickets.filter(i => i.mapId !== data.mapId), {
                 ...trelloTickets.filter(i => i.mapId === data.mapId)[0],
                 topic: input ? input : data.topic,
-                data: { ...data, subtopicsIds: subtopicIds },
+                data: data,
                 updated_at: new Date().getTime(),
                 user: user.id,
                 mapId: data.mapId,
@@ -61,7 +60,7 @@ const Project = () => {
             addMyDocs(d)
         }
         // eslint-disable-next-line
-    }, [data, subtopicIds]);
+    }, [data]);
     const handleClick = async () => {
 
         if (topic !== '') {
@@ -81,25 +80,23 @@ const Project = () => {
                 const str = response.data.choices[0].message.content;
 
                 const int = JSON.parse(str);
-                let subtopicsIds = [];
                 const newData = {
                     ...int, mapId: newId, subtopics: int.subtopics.map(i => {
-                        count++
-                        let subsubtopicsIds = [];
+                        count++;
+                        let count2 = 0;
                         let id = uuidv4();
-                        subtopicsIds.push(id)
                         return ({
-                            ...i, created_at: count, keys: id, subsubtopicIds: subsubtopicsIds, subtopics: i.subtopics.map(i => {
+                            ...i, created_at: count, index: count - 1, keys: id, subtopics: i.subtopics.map(i => {
+                                count2++
 
                                 let sid = uuidv4();
-                                subsubtopicsIds.push(sid)
-                                return ({ ...i, keys: sid })
+                                return ({ ...i, keys: sid, index: count2 })
                             })
                         })
                     })
                 };
-                setSubtopicIds(subtopicsIds)
-                setData({ ...newData, subtopicsIds })
+                console.log(newData)
+                setData(newData)
                 setLoad(false)
             } catch (error) {
                 setLoad(false)
@@ -116,7 +113,6 @@ const Project = () => {
             setData({
                 ...trelloTickets.filter(i => i.mapId === router.query.topic)[0].data, mapId: router.query.topic
             });
-            setSubtopicIds(trelloTickets.filter(i => i.mapId === router.query.topic)[0].data.subtopicsIds)
             setLoad(false)
         }
         // eslint-disable-next-line
@@ -126,7 +122,7 @@ const Project = () => {
     const reorder = (list, startIndex, endIndex) => {
         const result = Array.from(list);
         const [removed] = result.splice(startIndex, 1);
-        result.splice(endIndex, 0, removed);
+        result.splice(endIndex, 0, { ...removed, index: endIndex });
 
         return result;
     };
@@ -134,16 +130,7 @@ const Project = () => {
 
 
     const onDragEnd = (result) => {
-        let newOrder = subtopicIds;
-        if (result.combine) {
-            if (result.type === "COLUMN") {
-                const shallow = [...subtopicIds];
-                shallow.splice(result.source.index, 1);
-                newOrder = (shallow);
-                return;
-            }
-        }
-
+        let newOrder = data.subtopics;
         // dropped nowhere
         if (!result.destination) {
             return;
@@ -164,9 +151,60 @@ const Project = () => {
         if (result.type === "COLUMN") {
             const reorderedorder = reorder(newOrder, source.index, destination.index);
 
-            setSubtopicIds(reorderedorder);
+            setData(pre => ({ ...pre, subtopics: reorderedorder }));
 
             return;
+        }
+
+        // Set start and end variables
+        const start = data.subtopics.filter(i => i.keys === source.droppableId)[0]
+        const end = data.subtopics.filter(i => i.keys === destination.droppableId)[0]
+        // If start is the same as end, we're in the same column
+        if (start === end) {
+            // Move the item within the list
+            // Start by making a new list without the dragged item
+            let arr = data.subtopics;
+            const newList = start.subtopics.filter(
+                (_, idx) => idx !== source.index
+            )
+
+            // Then insert the item at the right location
+            newList.splice(destination.index, 0, { ...start.subtopics[source.index], index: destination.index })
+            const [removed] = arr.splice(arr.indexOf(start), 1);
+            arr.splice(data.subtopics.indexOf(removed), 0, { ...start, subtopics: newList })
+
+            setData(pre => ({ ...pre, subtopics: arr }));
+            return null
+        } else {
+            // If start is different from end, we need to update multiple columns
+            // Filter the start list like before
+            const newStartList = start.subtopics.filter(
+                (_, idx) => idx !== source.index
+            )
+
+            // Create a new start column
+            const newStartCol = { ...start, subtopics: newStartList }
+
+            // Make a new end list array
+            const newEndList = end.subtopics
+
+            // Insert the item into the end list
+            newEndList.splice(destination.index, 0, start.subtopics[source.index])
+
+            // Create a new end column
+            const newEndCol = {
+                ...end,
+                subtopics: newEndList
+            }
+            let arr = data.subtopics
+            const [removed] = arr.splice(arr.indexOf(start), 1);
+            arr.splice(data.subtopics.indexOf(removed), 0, newStartCol)
+            const [removedItem] = arr.splice(arr.indexOf(end), 1);
+            arr.splice(data.subtopics.indexOf(removedItem), 0, newEndCol)
+            // const ordered = reorder(arr, arr.indexOf(newEndCol), arr.indexOf(newStartCol));
+            // Update the state
+            setData(state => ({ ...state, subtopics: arr }))
+            return null
         }
 
     };
@@ -231,13 +269,15 @@ const Project = () => {
                                     >
                                         {(provided) => (
                                             <div className={'flex gap-x-7 '} ref={provided.innerRef} {...provided.droppableProps}>
-                                                {subtopicIds.map((column, idx) => {
+                                                {data.subtopics.sort(function (a, b) {
+                                                    return b.index - a.index
+                                                }).map((column, idx) => {
 
                                                     return (
                                                         <>
                                                             <Column
                                                                 setPopup={setPopup}
-                                                                key={column}
+                                                                key={column.keys}
                                                                 keys={idx}
                                                                 setCreatePopup={setCreatePopup} setData={setData} column={column} data={data} />
                                                         </>
@@ -259,8 +299,6 @@ const Project = () => {
                                             keys: id,
                                         }]
                                     }));
-
-                                    setSubtopicIds(pre => ([...pre, id]))
                                 }}>
                                     <p>+</p>
                                     <p>Add another list</p>
