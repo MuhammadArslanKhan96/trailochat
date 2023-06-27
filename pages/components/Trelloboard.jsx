@@ -23,7 +23,7 @@ const Trelloboard = () => {
               project or leading a team, our Trello Board provides a visual and
               organized space to bring your ideas to life.
             </p>
-            <div className="bg-[#5d6afb] rounded-[8px] mt-[40px] shadow-[10px_5px_10px_rgba(0,0,0,0.25)] py-[22px] px-[123px] w-fit">
+            <div className="bg-[#2B44FF] rounded-[8px] mt-[40px] shadow-[10px_5px_10px_rgba(0,0,0,0.25)] py-[22px] px-[123px] w-fit">
               <button className="text-[20px] text-[#FFFFFF] font-bold font-Inter">
                 Try Now!
               </button>
