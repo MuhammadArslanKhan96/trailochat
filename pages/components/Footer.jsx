@@ -13,19 +13,20 @@ const Footer = () => {
             <p>Contact us</p>
           </div>
         </div> */}
-        <div className="flex justify-between px-[80px]">
+        <div className="max-md:flex-wrap flex justify-between px-[80px]">
           <div className="flex flex-col ">
             <p className="font-normal  text-[35px] text-[#FFF] font-['Sanchez'] leading-[150%] translate-[0.5px]">
               {" "}
               GPT-MindMap{" "}
             </p>
-            <p className="text-[22px] font-normal text-[#FFF] py-[33px] w-[355px] font-['Roboto'] leading-[150%] ">
+            <p className="text-[22px] font-normal text-[#FFF] py-[33px] max-w-[355px] font-['Roboto'] leading-[150%] ">
               Unleash your boundless creativity, accelerate your learning
               process, and effortlessly accomplish tasks through an engaging,
               visually captivating, and neuro-inclusive approach. Begin your
               journey immediately, without spending a dime.
             </p>
           </div>
+
           <div className="flex flex-col ">
             <p className="font-medium text-[27.882px] text-[#FFF] font-['Archivo'] leading-[140%] ">
               {" "}
@@ -41,6 +42,7 @@ const Footer = () => {
               </div>
             </div>
           </div>
+
           {/* <div className="flex flex-col font-medium text-[27px] text-[#FFF]">
             Resources
           </div> */}
@@ -49,20 +51,21 @@ const Footer = () => {
               {" "}
               Subscribe to our Newsletter{" "}
             </p>
-            <p className="text-[22px] font-normal text-[#FFF] pt-[33px] font-['Roboto'] leading-[150%] w-[587px]">
+            <p className="text-[22px] font-normal text-[#FFF] pt-[33px] font-['Roboto'] leading-[150%] max-w-[587px]">
               Stay informed, stay connected! Our newsletter brings you the{" "}
               latest updates, insights, and trends in the world of AI an beyond.
               Join our community and be at the forefront of th conversation.
             </p>
-            <div className="pt-[30px] flex  gap-x-6 ">
-              <div className="">
+            <div className="max-md:flex-wrap pt-[30px] flex justify-center items-center  gap-x-6 ">
+              <div className="py-[20px]">
                 {" "}
                 <input
                   placeholder="Enter your email..."
                   className="bg-[#343434] border border-[#DFDFDF] font-['Inter'] text-[#DFDFDF] outline-none  rounded-[17px] py-[17px] w-full pl-[14px] pr-[70px] text-[20px]"
                 />
               </div>
-              <div className="bg-[#FF5C00] flex justify-center font-['Archivo'] leading-[] rounded-[17px]  px-[82px] py-[17px]">
+
+              <div className="bg-[#FF5C00] flex justify-center font-['Archivo'] leading-[] rounded-[17px]  h-fit px-[9px] py-[20px]">
                 <button className="text-[18px] font-bold text-[#fff]">
                   SUBSCRIBE
                 </button>

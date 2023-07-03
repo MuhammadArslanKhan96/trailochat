@@ -74,8 +74,9 @@ const Plan = () => {
             </div>
           </div>
         </div>
-        <div className="flex gap-x-20 justify-center pt-[70px]">
-          <div className=" mt-[90px] max-w-[394px] h-fit  bg-white border border-[#353030] rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
+
+        <div className="flex-wrap flex gap-x-20 gap-y-10 justify-center pt-[70px]">
+          <div className="  max-w-[394px] h-fit  bg-white border border-[#353030] rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
             <div className="flex justify-center">
               <h5 className=" text-[37px] font-bold  font-Poppins text-[#000] mt-[11px]">
                 Basic Package
@@ -157,7 +158,8 @@ const Plan = () => {
               </button>
             </div>
           </div>
-          <div className=" mb-[90px]  max-w-[394px] h-fit text-[#ffffff] bg-[#000425]   rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)]    ">
+
+          <div className="    max-w-[394px] h-fit text-[#ffffff] bg-[#000425]   rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)]    ">
             <div className="bg-[#3D45FF]  text-[27px] rounded-[15px] pt-[12px] pb-[14px] px-[13px] w-full flex justify-center text-center">
               {" "}
               Enhanced Package
@@ -255,7 +257,8 @@ const Plan = () => {
               </div>
             </div>
           </div>
-          <div className=" mt-[90px]  max-w-[411px] h-fit bg-white border border-[#353030] rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
+
+          <div className="   max-w-[411px] h-fit bg-white border border-[#353030] rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
             <div className="flex justify-center">
               <h5 className=" text-[30px] font-bold font-Poppins text-[#000]">
                 Standard Package

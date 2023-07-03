@@ -4,24 +4,24 @@ import React from "react";
 const Planet = () => {
   return (
     <>
-      <div className="flex justify-center py-[55px] flex-col bg-[#FFFFFF] px-[100px]">
+      <div className=" flex justify-center py-[55px] flex-col bg-[#FFFFFF] px-[100px]">
         <p className="text-[55px] text-[#000] font-Poppins font-medium pb-[55px] drop-shadow-[10px_6px_10px_rgba(0,0,0,0.25)]">
           GPT-MindMap with AI is unique to the planet.{" "}
         </p>
-        <div className="flex justify-around items-center ">
+        <div className="max-md:flex-wrap gap-y-[70px] flex justify-around items-center ">
           <div className="flex flex-col">
-            <p className="text-[25px] text-[#000] font-Poppins  w-[650px]">
+            <p className="text-[25px] text-[#000] font-Poppins max-w-[650px]">
               Unleash the power of one of the most expansive deep learning
               networks ever developed and tap into a world of boundless
               creativity.
             </p>
-            <p className="text-[25px] text-[#000] font-Poppins w-[650px]">
+            <p className="text-[25px] text-[#000] font-Poppins max-w-[650px]">
               {" "}
               Our cutting-edge AI tool harnesses this state-of-the-art network
               to generate original and innovative ideas for anything your
               imagination desires.
             </p>
-            <p className="text-[25px] text-[#000] font-Poppins w-[650px]">
+            <p className="text-[25px] text-[#000] font-Poppins max-w-[650px]">
               {" "}
               From brainstorming new products to crafting captivating stories,
               our AI-driven solution provides an endless well of inspiration.{" "}
@@ -45,7 +45,7 @@ const Planet = () => {
               </button>
             </div>
           </div>
-          <div>
+          <div className="">
             <Image src="/images/planet.svg" width={605} height={543} alt="" />
           </div>
         </div>

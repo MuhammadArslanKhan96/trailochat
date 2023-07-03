@@ -5,7 +5,7 @@ const Faq = () => {
   return (
     <>
       <div className="flex justify-center py-[55px] border-[#858484] border-dashed border-2 flex-col bg-[#FFFFFF]">
-        <p className="text-[40px] self-center font-bold font-Poppins pb-[41px] bt-[90px]">
+        <p className="text-[40px] text-center font-bold font-Poppins pb-[41px]">
           Frequently Asked Questions
         </p>
         <div className="flex px-[100px]">
@@ -24,7 +24,10 @@ const Faq = () => {
                 alt=""
                 className="py-[8px]"
               />
-              <span className="text-[18px] w-[880px]">
+              <span
+                className="text-[18px] max-w-[880px] break-words
+              "
+              >
                 <p>
                   During the Free Trial period, you have access to basic mind
                   mapping functionality. This includes creatinind maps, adding

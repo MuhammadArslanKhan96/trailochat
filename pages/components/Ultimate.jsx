@@ -13,7 +13,7 @@ const Ultimate = () => {
             Includes GPT Task, GPT MindMap, AI, and much more.
           </p>
         </div>
-        <div className="flex justify-center gap-x-10   ">
+        <div className="max-md:flex-wrap px-[40px] flex justify-center gap-x-10   ">
           <div>
             <Image src="/images/mindmap.svg" width={700} height={400} alt="" />
           </div>
@@ -22,7 +22,7 @@ const Ultimate = () => {
               {" "}
               MindMap
             </p>
-            <p className="text-[18px] font-Poppins text-[#000] w-[687px]">
+            <p className="text-[18px] font-Poppins text-[#000] max-w-[687px]">
               This groundbreaking tool empowers you to effortlessly organize and{" "}
               visualize your thoughts, sparking new insights and connections.Our{" "}
               intelligent algorithms work in harmony with your input,
@@ -35,7 +35,7 @@ const Ultimate = () => {
               catalyst for innovation. Experience the future of ideation and
               elevate your creative endeavors to unprecedented heights.
             </p>
-            <div className="bg-[#2B44FF] rounded-[9px] shadow-[10px_5px_10px_rgba(0,0,0,0.25)] mt-[20px] py-[19px] px-[44px] w-fit">
+            <div className="bg-[#2B44FF] rounded-[9px] shadow-[10px_5px_10px_rgba(0,0,0,0.25)] mt-[20px] py-[19px] px-[44px] max-md:px-[38px] max-md:py-[12px] w-fit">
               <button className="text-[20px] text-[#FFFFFF] font-bold">
                 Chart Your Ideas!
               </button>

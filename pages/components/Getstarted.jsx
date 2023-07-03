@@ -5,7 +5,7 @@ const Getstarted = () => {
   return (
     <>
       <div className="flex bg-[#0b0d52] justify-center items-center py-[60px] px-[41px]">
-        <div className="flex flex-col pl-[80px]">
+        <div className="flex flex-col md:pl-[80px]">
           <div className="flex gap-x-2 items-center">
             <span className="flex w-[10px] h-[10px] bg-[#ECA53C] rounded-full"></span>
             <p className="text-[20px] font-['Poppins]  text-[#FF4646] font-bold ">
@@ -24,7 +24,7 @@ const Getstarted = () => {
             </p>
           </div>
           <div className="flex flex-col mt-[15px]">
-            <p className="text-[#FFFFFFBD] text-[20px] font-['Poppins] w-[506px]">
+            <p className="text-[#FFFFFFBD] text-[20px] font-['Poppins] max-w-[506px]">
               Unleash your boundless creativity, accelerate your learning
               process, and effortlessly accomplish tasks through an engaging,
               visually captivating, and neuro- inclusive approach. Begin your
@@ -37,7 +37,7 @@ const Getstarted = () => {
             </button>
           </div>
         </div>
-        <div className="pr-[80px]">
+        <div className="pr-[80px] max-md:hidden ">
           <Image src="/images/bulb.svg" width={830} height={530} alt="" />
         </div>
       </div>
