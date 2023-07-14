@@ -16,6 +16,10 @@ const Mapping = () => {
               success. Try our AI mind mapping tool today and experience the
               future of ideation.
             </p>
+            <li className="text-[16px]">you lose Track</li>
+            <li className="text-[16px]">noone can Follow</li>
+            <li className="text-[16px]">you dont Find relevant information</li>
+            <li className="text-[16px]">you lose Time</li>
             <div className="max-sm:mt-[20px] mt-[55px] bg-[#0E1FA2] text-[#FFF] max-sm:text-[12px] text-[16px] font-bold leading-[155%] font-Nunito w-fit max-sm:py-[6px] max-sm:px-[20px]  py-[12px] px-[56px] tracking-[0.16px] border-[3px] border-[#0E1FA2]  rounded-full">
               Try it now
             </div>

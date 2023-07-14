@@ -39,7 +39,7 @@ const Signup = () => {
     }
     useEffect(() => {
         if (user) {
-            router.replace(`/mindmap`)
+            router.replace(router.query.accept?`/accept?id=${router.query.accept}`:'/mindmap')
         }
         // eslint-disable-next-line
     }, [user])

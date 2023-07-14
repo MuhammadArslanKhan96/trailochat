@@ -15,7 +15,7 @@ export default async function handler(
                 await db.collection('maps').doc(doc2.id).delete();
             }
             for (var doc2 of (req.body)) {
-                await collection.doc(uuidv4()).set({
+                await collection.doc(doc2.mapId).set({
                     ...doc2,
                     created_at:
                         snapshot2.filter(i => (i.topic === doc2.topic)).length ?
@@ -28,6 +28,7 @@ export default async function handler(
             }
             res.status(200).json(snapshot)
         } catch (error) {
+            console.log(req.body[0])
             console.log(error)
             res.status(400).json(error)
         }

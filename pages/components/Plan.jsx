@@ -6,6 +6,7 @@ import axios from "axios";
 
 const Plan = () => {
   const { user, setUser } = React.useContext(UserContext);
+  const [active, setActive] = React.useState("standard");
   const router = useRouter();
   const createPlan = async (tier) => {
     if (user) {
@@ -78,9 +79,16 @@ const Plan = () => {
         </div>
 
         <div className="flex-wrap flex gap-x-20 gap-y-10 justify-center max-sm:pt-[40px] pt-[70px]">
-          <div className="  max-w-[394px] max-sm:max-w-[280px] h-fit  bg-white border border-[#353030] rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
+          <div
+            className={`max-w-[394px] max-sm:max-w-[280px] h-fit rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] cursor-pointer p-4 dark:border-gray-700 ${
+              active === "basic"
+                ? "text-[#ffffff] bg-[#000425] "
+                : " bg-white border border-[#353030]"
+            }`}
+            onClick={() => setActive("basic")}
+          >
             <div className="flex justify-center">
-              <h5 className=" text-[37px] max-sm:text-[16px] font-bold  font-Poppins text-[#000] mt-[11px]">
+              <h5 className=" text-[37px] max-sm:text-[16px] font-bold  font-Poppins mt-[11px]">
                 Basic Package
               </h5>
             </div>
@@ -90,7 +98,7 @@ const Plan = () => {
                 <span className="text-[35px] font-bold tracking-tight">0</span>
                 <span className=" text-[20px] font-normal mt-2">/MO</span>
               </div> */}
-              <div className="flex justify-center max-sm:text-[12px] flex-col font-Poppins py-[20px] text-[20px] text-center  text-[#000]">
+              <div className="flex justify-center max-sm:text-[12px] flex-col font-Poppins py-[20px] text-[20px] text-center ">
                 <p>
                   Get a taste of our AI mind mapping tool with our basic
                   package.
@@ -106,7 +114,7 @@ const Plan = () => {
                     height={30}
                     alt=""
                   />
-                  <span className="text-[15px] max-sm:text-[12px] font-bold font-Poppins text-[#000]">
+                  <span className="text-[15px] max-sm:text-[12px] font-bold font-Poppins">
                     Limited access to advanced features.
                   </span>
                 </li>
@@ -118,7 +126,7 @@ const Plan = () => {
                     height={30}
                     alt=""
                   />
-                  <span className="text-[15px] max-sm:text-[12px] font-bold font-Poppins text-[#000]">
+                  <span className="text-[15px] max-sm:text-[12px] font-bold font-Poppins">
                     Basic support.
                   </span>
                 </li>
@@ -130,7 +138,7 @@ const Plan = () => {
                     height={30}
                     alt=""
                   />
-                  <span className="text-[15px] max-sm:text-[12px] font-bold font-Poppins text-[#000]">
+                  <span className="text-[15px] max-sm:text-[12px] font-bold font-Poppins">
                     14 Days duration.
                   </span>
                 </li>
@@ -142,7 +150,7 @@ const Plan = () => {
                     height={30}
                     alt=""
                   />
-                  <span className="text-[15px] max-sm:text-[12px] font-bold font-Poppins text-[#000]">
+                  <span className="text-[15px] max-sm:text-[12px] font-bold font-Poppins">
                     Price: $0.
                   </span>
                 </li>
@@ -165,8 +173,128 @@ const Plan = () => {
             </div>
           </div>
 
-          <div className="    max-w-[394px] max-sm:max-w-[280px] h-fit text-[#ffffff] bg-[#000425]   rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)]    ">
-            <div className="bg-[#3D45FF]  text-[27px] max-sm:text-[16px]  rounded-[15px] pt-[12px] pb-[14px] px-[13px] w-full flex justify-center text-center">
+          <div
+            className={`max-w-[411px] max-sm:max-w-[280px] h-fit rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] cursor-pointer p-4 dark:border-gray-700 ${
+              active === "standard"
+                ? "text-[#ffffff] bg-[#000425] "
+                : " bg-white border border-[#353030]"
+            }`}
+            onClick={() => setActive("standard")}
+          >
+            <div className="flex justify-center">
+              <h5 className="text-[30px] max-sm:text-[16px] font-bold font-Poppins">
+                Standard Package
+              </h5>
+            </div>
+            <div className="px-[40px]">
+              <div
+                className={`flex justify-center items-center ${
+                  active === "standard" ? "text-white-900" : "text-gray-900"
+                }`}
+              >
+                <span className="text-[40px] max-sm:text-[16px] font-bold tracking-tight font-Poppins">
+                  $9.99
+                </span>
+                <span className=" text-[20px] max-sm:text-[12px] font-normal max-sm:mt-0 mt-2 font-Poppins">
+                  /month
+                </span>
+              </div>
+              <div className="flex justify-center flex-col py-[20px] text-[20px] max-sm:text-[12px] text-center font-Poppins max-w-[340px]">
+                <p>
+                  With our standard package, take your mind mapping to the next
+                  level.
+                </p>
+                {/* <p>mapping tool with our free trial</p> */}
+              </div>
+              <ul role="list" className="space-y-5 my-7 max-sm:my-2">
+                <li className="flex space-x-3 items-center">
+                  <Image
+                    className="max-sm:w-[15px] max-sm:h-[15px]"
+                    src="/images/check_blue.svg"
+                    width={30}
+                    height={30}
+                    alt=""
+                  />
+                  <span className="text-[15px] max-sm:text-[12px] font-bold">
+                    Full access to all features
+                  </span>
+                </li>
+                <li className="flex space-x-3 items-center">
+                  <Image
+                    className="max-sm:w-[15px] max-sm:h-[15px]"
+                    src="/images/check_blue.svg"
+                    width={30}
+                    height={30}
+                    alt=""
+                  />
+                  <span className="text-[15px] max-sm:text-[12px] font-bold">
+                    Priority support.
+                  </span>
+                </li>
+                <li className="flex space-x-3 items-center">
+                  <Image
+                    className="max-sm:w-[15px] max-sm:h-[15px]"
+                    src="/images/check_blue.svg"
+                    width={30}
+                    height={30}
+                    alt=""
+                  />
+                  <span className="text-[15px] max-sm:text-[12px] font-bold">
+                    Collaborative mind mapping
+                  </span>
+                </li>
+                <li className="flex space-x-3 items-center">
+                  <Image
+                    className="max-sm:w-[15px] max-sm:text-[12px] max-sm:h-[15px]"
+                    src="/images/check_blue.svg"
+                    width={30}
+                    height={30}
+                    alt=""
+                  />
+                  <span className="text-[15px]  max-sm:text-[12px] font-bold">
+                    Customization options
+                  </span>
+                </li>
+                <li className="flex space-x-3 items-center">
+                  <Image
+                    className="max-sm:w-[15px] max-sm:h-[15px]"
+                    src="/images/check_blue.svg"
+                    width={30}
+                    height={30}
+                    alt=""
+                  />
+                  <span className="text-[15px]  max-sm:text-[12px] font-bold">
+                    Price: $9.99/month
+                  </span>
+                </li>
+              </ul>
+              <button
+                disabled={user && user.tier === "Standard"}
+                type="button"
+                className={
+                  "text-white font-bold mt-[30px] bg-[#1A2CB4] rounded-[10px] text-[20px] max-sm:text-[12px] px-5 py-2.5 inline-flex justify-center w-full text-center" +
+                  ` ${
+                    user && user.tier === "Standard"
+                      ? "cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`
+                }
+                onClick={() => createPlan("Standard")}
+              >
+                Choose Standard{" "}
+              </button>
+            </div>
+          </div>
+
+          <div
+            className={`max-w-[394px] max-sm:max-w-[280px] h-fit shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] rounded-[16px] cursor-pointer ${
+              active === "enhanced"
+                ? "text-[#ffffff] bg-[#000425] "
+                : "bg-white border border-[#353030]"
+            }`}
+            onClick={() => setActive("enhanced")}
+          >
+            <div className="bg-[#3D45FF] text-[27px] max-sm:text-[16px]  rounded-[15px] pt-[12px] pb-[14px] px-[13px] w-full flex justify-center text-center">
               {" "}
               Enhanced Package
             </div>
@@ -270,108 +398,6 @@ const Plan = () => {
                   Upgrade tp Premium
                 </button>
               </div>
-            </div>
-          </div>
-
-          <div className="   max-w-[411px] max-sm:max-w-[280px] h-fit bg-white border border-[#353030] rounded-[30px] shadow-[10px_5px_4px_5px_rgba(0,0,0,0.25)] p-4 dark:border-gray-700 ">
-            <div className="flex justify-center">
-              <h5 className=" text-[30px] max-sm:text-[16px] font-bold font-Poppins text-[#000]">
-                Standard Package
-              </h5>
-            </div>
-            <div className="px-[40px]">
-              <div className="flex justify-center items-center text-gray-900 ">
-                <span className="text-[40px] max-sm:text-[16px] font-bold tracking-tight font-Poppins">
-                  $9.99
-                </span>
-                <span className=" text-[20px] max-sm:text-[12px] font-normal max-sm:mt-0 mt-2 font-Poppins">
-                  /month
-                </span>
-              </div>
-              <div className="flex justify-center flex-col py-[20px] text-[20px] max-sm:text-[12px] text-center font-Poppins max-w-[340px]">
-                <p>
-                  With our standard package, take your mind mapping to the next
-                  level.
-                </p>
-                {/* <p>mapping tool with our free trial</p> */}
-              </div>
-              <ul role="list" className="space-y-5 my-7 max-sm:my-2">
-                <li className="flex space-x-3 items-center">
-                  <Image
-                    className="max-sm:w-[15px] max-sm:h-[15px]"
-                    src="/images/check_blue.svg"
-                    width={30}
-                    height={30}
-                    alt=""
-                  />
-                  <span className="text-[15px] max-sm:text-[12px] font-bold">
-                    Full access to all features
-                  </span>
-                </li>
-                <li className="flex space-x-3 items-center">
-                  <Image
-                    className="max-sm:w-[15px] max-sm:h-[15px]"
-                    src="/images/check_blue.svg"
-                    width={30}
-                    height={30}
-                    alt=""
-                  />
-                  <span className="text-[15px] max-sm:text-[12px] font-bold">
-                    Priority support.
-                  </span>
-                </li>
-                <li className="flex space-x-3 items-center">
-                  <Image
-                    className="max-sm:w-[15px] max-sm:h-[15px]"
-                    src="/images/check_blue.svg"
-                    width={30}
-                    height={30}
-                    alt=""
-                  />
-                  <span className="text-[15px] max-sm:text-[12px] font-bold text-[#000] ">
-                    Collaborative mind mapping
-                  </span>
-                </li>
-                <li className="flex space-x-3 items-center">
-                  <Image
-                    className="max-sm:w-[15px] max-sm:text-[12px] max-sm:h-[15px]"
-                    src="/images/check_blue.svg"
-                    width={30}
-                    height={30}
-                    alt=""
-                  />
-                  <span className="text-[15px]  max-sm:text-[12px] font-bold">
-                    Customization options
-                  </span>
-                </li>
-                <li className="flex space-x-3 items-center">
-                  <Image
-                    className="max-sm:w-[15px] max-sm:h-[15px]"
-                    src="/images/check_blue.svg"
-                    width={30}
-                    height={30}
-                    alt=""
-                  />
-                  <span className="text-[15px]  max-sm:text-[12px] font-bold">
-                    Price: $9.99/month
-                  </span>
-                </li>
-              </ul>
-              <button
-                disabled={user && user.tier === "Standard"}
-                type="button"
-                className={
-                  "text-white font-bold mt-[30px] bg-[#1A2CB4] rounded-[10px] text-[20px] max-sm:text-[12px] px-5 py-2.5 inline-flex justify-center w-full text-center" +
-                  ` ${
-                    user && user.tier === "Standard"
-                      ? "cursor-not-allowed"
-                      : "cursor-pointer"
-                  }`
-                }
-                onClick={() => createPlan("Standard")}
-              >
-                Choose Standard{" "}
-              </button>
             </div>
           </div>
         </div>

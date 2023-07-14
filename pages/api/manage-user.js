@@ -8,7 +8,7 @@ const addUser = async (
     user
 ) => {
     try {
-        const document = await db.collection('users').doc(user.id).set({
+        const document = await db.collection('users').doc(user.email).set({
             ...user, tier: 'Free'
         })
         return document;
@@ -32,11 +32,11 @@ const getUser = async (uid) => {
 export default async function handler(req, res) {
     if (req.method === 'GET') {
         try {
-            const { id, image, name, email, password } = req.query;
-            const user = { id, image, name, email, password }
-            const token = await admin.auth().createCustomToken(id);
-
-            const docSnap = await getUser(user.id);
+            const { image, name, email, password } = req.query;
+            const user = { image, name, email, password }
+            const token = await admin.auth().createCustomToken(email);
+            const docSnap = await getUser(user.email);
+            console.log(docSnap.id)
             if (docSnap.exists) {
                 return res.status(200).send({ ...docSnap.data(), token });
 
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
                 await addUser(
                     user
                 );
-                const docSnap = await getUser(user.id);
+                const docSnap = await getUser(user.email);
                 return res.status(201).send({ ...docSnap.data(), token });
 
             }

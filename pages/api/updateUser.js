@@ -8,7 +8,7 @@ const addUser = async (
     user
 ) => {
     try {
-        const document = await db.collection('users').doc(user.id).update(user)
+        const document = await db.collection('users').doc(user.email).update(user)
         return document;
     } catch (e) {
         console.log(e.message)

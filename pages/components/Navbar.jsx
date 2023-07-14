@@ -86,9 +86,9 @@ const Navbar = () => {
         {/* Mobile Button */}
         <div onClick={handleNav} className="block lg:hidden z-10">
           {nav ? (
-            <AiOutlineClose size={20} style={{ color: `#0D1296` }} />
+            <AiOutlineClose size={20} style={{ color: `#0D1296`, cursor:'pointer' }} />
           ) : (
-            <AiOutlineMenu size={20} style={{ color: `#0D1296` }} />
+            <AiOutlineMenu size={20} style={{ color: `#0D1296`, cursor:'pointer' }} />
           )}
         </div>
         {/* Mobile Menu */}
@@ -104,7 +104,7 @@ const Navbar = () => {
               onClick={handleNav}
               className="p-4 text-4xl text-[#0D1296] hover:text-gray-500"
             >
-              <Link href="/#work">Lanugae</Link>
+              <Link href="/#work">language</Link>
             </li>
             <li
               onClick={handleNav}
@@ -121,8 +121,8 @@ const Navbar = () => {
             >
               <Link href="/#contact">Support</Link>
             </li>
-            <Link href="https://calendly.com/m-arslan2201/call-with-cubicus?month=2023-03">
-              <button className="bg-[#0D1296] text-[#fff]  text-lg font-bold px-4">
+            <Link href="/mindmap">
+              <button className="bg-[#0D1296] text-[#fff]  text-lg font-bold px-4 py-2 rounded-[5px]">
                 Start For Free
               </button>
             </Link>
