@@ -11,8 +11,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const link = `http://192.168.18.11:3000/signin?accept=`;            //local url
-// const link = `https://trailochat.vercel.app/signin?accept=`;    //live url
+// const link = `http://192.168.18.11:3000/signin?accept=`;            //local url
+const link = `https://trailochat.vercel.app/signin?accept=`;    //live url
 
 export default async function sendEmail(req, res) {
   const { curentUserEmail, toEmail, id } = req.body;
