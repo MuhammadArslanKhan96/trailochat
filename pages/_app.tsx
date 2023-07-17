@@ -38,7 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Script src='./components/js/jsmind.draggable-node.js' />
       <UseMarkdown >
-        <UserContext.Provider value={{ user, setUser, maps, setMaps, trelloTickets, setTrelloTickets }}>
+        <UserContext.Provider value={{ user, setUser, maps, setMaps, trelloTickets, setTrelloTickets, getData }}>
           <Component {...pageProps} />
         </UserContext.Provider>
       </UseMarkdown >

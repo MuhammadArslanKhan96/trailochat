@@ -7,7 +7,7 @@ export default async function handler(
 ) {
     if (req.method === 'POST') {
         try {
-            const citiesRef = db.collection('trellotickets').where('user', '==', req.query.user);
+            const citiesRef = db.collection('trellotickets').where('users', 'array-contains', req.query.user);
             const collection = db.collection('trellotickets');
             const snapshot = (await citiesRef.get()).docs.map((doc) => ({ ...doc.data(), id: doc.id }));
             const snapshot2 = (await collection.get()).docs.map((doc) => ({ ...doc.data(), id: doc.id }));

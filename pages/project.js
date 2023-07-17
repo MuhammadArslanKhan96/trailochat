@@ -53,53 +53,50 @@ const Project = () => {
 
   const socketInitializer = async () => {
     // await axios.get("../../server").finally(() => {
-      socket = io('https://main--inspiring-kulfi-f4f745.netlify.app/');
+    socket = io();
 
-      socket.on("connect", () => {
-        console.log("connected: " + socket.id);
-      });
+    socket.on("connect", () => {
+      console.log("connected: " + socket.id);
+    });
 
-      socket.on("hello", (msg) => {
-        console.log(msg);
-      });
+    socket.on("hello", (msg) => {
+      console.log(msg);
+    });
 
-      socket.on("newData", (incomingdata) => {
-        // console.log(user, data);
-        // console.log(trelloTickets[0], incomingdata);
-        if (user && incomingdata.users.includes(user.email)) {
-          let newArr = [
-            ...trelloTickets.filter((i) => i.mapId !== incomingdata.mapId),
-            incomingdata,
-          ];
+    socket.on("newData", newdata => getNewData(newdata[0], newdata[1]));
 
-          setTrelloTickets(newArr);
-          if (
-            data &&
-            data.mapId === incomingdata.mapId &&
-            data !== incomingdata.data
-          ) {
-            setLoad(true);
-            setData("");
-
-            setData(incomingdata.data);
-            setLoad(false);
-          }
-        }
-      });
-
-      if (socket)
-        return () => {
-          socket.disconnect();
-        };
+    if (socket)
+      return () => {
+        socket.disconnect();
+      };
     // });
   };
 
+  const getNewData = async (data, incomingdata) => {
+    if (user && incomingdata && incomingdata.users.includes(user.email) && incomingdata.lastUpdatedUser !== user.email && incomingdata.updated_at > currentProject.updated_at) {
+      if (
+        data &&
+        data.mapId === incomingdata.mapId &&
+        data !== incomingdata.data
+      ) {
+        setLoad(true);
+        setData("");
+        setCurrentProject(incomingdata);
+        setData(incomingdata.data);
+        setLoad(false);
+      }
+    }
+  };
+
+
   const addMyDocs = async (tickets) => {
     // if(tickets!==trelloTickets){
-    socket.emit("newTrello", { ...currentProject, data });
-    await axios.post(`/api/trellotickets/addtrello?user=${user.id}`, tickets, {
-      timeout: 300000,
-    });
+    socket.emit("newTrello", [currentProject.data, { ...currentProject, data, lastUpdatedUser: user.email }]);
+    if (tickets.filter(i => i.mapId === currentProject.mapId)[0].updated_at < currentProject.mapId) {
+      await axios.post(`/api/trellotickets/addtrello?user=${user.id}`, tickets, {
+        timeout: 300000,
+      });
+    }
     // }
   };
 
@@ -173,33 +170,36 @@ const Project = () => {
           mapId: newId,
           subtopics: int.subtopics
             ? int.subtopics.map((i) => {
-                count++;
-                let count2 = 0;
-                let id = uuidv4();
-                return {
-                  ...i,
-                  created_at: count,
-                  index: count - 1,
-                  keys: id,
-                  subtopics: i.subtopics
-                    ? i.subtopics.map((i) => {
-                        count2++;
+              count++;
+              let count2 = 0;
+              let id = uuidv4();
+              return {
+                ...i,
+                created_at: count,
+                index: count - 1,
+                keys: id,
+                subtopics: i.subtopics
+                  ? i.subtopics.map((i) => {
+                    count2++;
 
-                        let sid = uuidv4();
-                        return { ...i, keys: sid, index: count2 };
-                      })
-                    : [],
-                };
-              })
+                    let sid = uuidv4();
+                    return { ...i, keys: sid, index: count2 };
+                  })
+                  : [],
+              };
+            })
             : [],
         };
 
         setData(newData);
 
+
         setCurrentProject({
+          topic: topic,
           data: newData,
           updated_at: new Date().getTime(),
           users: [user.email],
+          mapId: newData.mapId,
         });
 
         setLoad(false);
