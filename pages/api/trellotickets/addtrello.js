@@ -15,7 +15,7 @@ export default async function handler(
                 await db.collection('trellotickets').doc(doc2.id).delete();
             }
             for (var doc2 of (req.body)) {
-                await collection.doc(uuidv4()).set({
+                await collection.doc(doc2.mapId).set({
                     ...doc2,
                     created_at:
                         snapshot2.filter(i => (i.topic === doc2.topic)).length ?

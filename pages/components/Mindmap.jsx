@@ -17,7 +17,8 @@ export default function Mindmap({
   useEffect(() => {
     setMarkdown(data);
     // eslint-disable-next-line
-  }, []);
+  }, [data]);
+  console.log(data);
 
   useEffect(() => {
     setShowMap(true);
@@ -50,7 +51,7 @@ export default function Mindmap({
           style={{
             width: "100%",
             height: "100%",
-            maxHeight: "780px",
+            maxHeight: "90vh",
             overflow: "hidden",
           }}
         ></div>

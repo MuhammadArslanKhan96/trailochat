@@ -22,8 +22,8 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   const getData = async () => {
-    const data = await axios.get(`/api/mindmaps/getmaps?user=${user?.id}`).then(r => r.data);
-    const data2 = await axios.get(`/api/trellotickets/gettrello?user=${user?.id}`).then(r => r.data);
+    const data = await axios.get(`/api/mindmaps/getmaps?user=${user?.email}`).then(r => r.data);
+    const data2 = await axios.get(`/api/trellotickets/gettrello?user=${user?.email}`).then(r => r.data);
     setMaps(data)
     setTrelloTickets(data2)
   }

@@ -31,8 +31,8 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="fixed left-0 top-0 w-full bg-[#F4F4F4] z-10 ease-in duration-300">
-      <div className="w-auto mx-8  flex justify-between items-center py-4 text-white">
+    <div className="fixed left-0 top-0 w-full  bg-[#F4F4F4] z-10 ease-in duration-300">
+      <div className="w-auto mx-8  flex justify-between h-[81px] items-center py-4 text-white">
         <div className="flex items-center">
           {/* <div>
             <Link href="/">
@@ -47,35 +47,35 @@ const Navbar = () => {
           </div> */}
           {/*  */}
           <div
-            className="px-3 text-[20px] font-bold text-[#000000]
-         font-sans "
+            className="px-3 pt-[25px] pb-[20px] pl-[27px] text-[20px] font-bold text-[#000000]
+         font-['Poppins]"
           >
-            GPT MINDMAP
+            GPT-MINDMAP
           </div>
         </div>
         <div className="flex items-center">
           <ul style={{ color: `${textColor}` }} className="hidden lg:flex">
-            <li className="p-4 px-8 text-[#000000] text-[14px] font-bold">
-              <Link href="# ">Lanaguage</Link>
+            <li className="p-4 pr-[38px] pt-[33px] pb-[27px] text-[#000000] text-[14px] font-bold font-['Poppins]">
+              <Link href="# ">Home</Link>
             </li>
-            <li className="p-4 px-8 text-[#000000] text-[14px] font-bold">
+            <li className="p-4 pr-[46px] pt-[33px] pb-[27px] text-[#000000] text-[14px] font-bold font-['Poppins]">
               <Link href="# ">FAQ</Link>
             </li>
-            <li className="p-4 px-8 text-[#000000] text-[14px] font-bold">
+            <li className="p-4 pr-[43px] pt-[33px] pb-[27px] text-[#000000] text-[14px] font-bold font-['Poppins]">
               <Link href="#pricing">Price Plan</Link>
             </li>
 
-            <li className="p-4 px-8 text-[#000000] text-[14px] font-bold">
+            <li className="p-4 pr-[55px] pt-[33px] pb-[27px] text-[#000000] text-[14px] font-bold font-['Poppins]">
               <Link href="# ">About</Link>
             </li>
-            <li className="p-4 px-16 text-[#000000] text-[14px] font-bold">
+            <li className="p-4 pr-[42px] pt-[33px] pb-[27px] text-[#000000] text-[14px] font-bold font-['Poppins]">
               <Link href="# ">Support</Link>
             </li>
             <Link
               href="/mindmap"
-              className="flex items-center gap-x-2 border shadow-[0px_4px_4px_rgba(0,0,0,0.25)] border-[#FFF7F7] text-white text-[14px] px-8 bg-[#2B44FF]  rounded-[5px]"
+              className="flex items-center gap-x-2 border mr-[43px] mt-[22px] mb-[16px]  shadow-[0px_4px_4px_rgba(0,0,0,0.25)] border-[#FFF7F7] text-white text-[14px] px-8 bg-[#2B44FF]  rounded-[5px]"
             >
-              <button className="  text-white font-bold text-[16px]   ">
+              <button className="  text-white font-bold text-[16px]  font-['Inter'] ">
                 Start For Free
               </button>
               <FiArrowRight size={20} />
@@ -86,9 +86,9 @@ const Navbar = () => {
         {/* Mobile Button */}
         <div onClick={handleNav} className="block lg:hidden z-10">
           {nav ? (
-            <AiOutlineClose size={20} style={{ color: `#0D1296` }} />
+            <AiOutlineClose size={20} style={{ color: `#0D1296`, cursor:'pointer' }} />
           ) : (
-            <AiOutlineMenu size={20} style={{ color: `#0D1296` }} />
+            <AiOutlineMenu size={20} style={{ color: `#0D1296`, cursor:'pointer' }} />
           )}
         </div>
         {/* Mobile Menu */}
@@ -104,7 +104,7 @@ const Navbar = () => {
               onClick={handleNav}
               className="p-4 text-4xl text-[#0D1296] hover:text-gray-500"
             >
-              <Link href="/#work">Lanugae</Link>
+              <Link href="/#work">language</Link>
             </li>
             <li
               onClick={handleNav}
@@ -121,8 +121,8 @@ const Navbar = () => {
             >
               <Link href="/#contact">Support</Link>
             </li>
-            <Link href="https://calendly.com/m-arslan2201/call-with-cubicus?month=2023-03">
-              <button className="bg-[#0D1296] text-[#fff]  text-lg font-bold px-4">
+            <Link href="/mindmap">
+              <button className="bg-[#0D1296] text-[#fff]  text-lg font-bold px-4 py-2 rounded-[5px]">
                 Start For Free
               </button>
             </Link>
