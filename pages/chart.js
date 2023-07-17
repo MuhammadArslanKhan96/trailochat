@@ -45,7 +45,7 @@ const Chart = () => {
 
                 const response = await openai.createChatCompletion({
                     model: 'gpt-3.5-turbo',
-                    messages: [{ role: 'user', content: `Create a mind map for ${topic} without hashtags in markdown format with desc of each topic after adding colon and only 3 childs` }],
+                    messages: [{ role: 'user', content: `Create a mind map for ${topic} without hashtags in markdown format with desc of each topic after adding colon and only 3 childs without subtopics of subtopic` }],
                 });
                 const str = response.data.choices[0].message.content;
 
@@ -66,7 +66,7 @@ const Chart = () => {
 
             const response = await openai.createChatCompletion({
                 model: 'gpt-3.5-turbo',
-                messages: [{ role: 'user', content: `Create a mind map for ${topic} without hashtags in markdown format with desc of each topic after adding colon and only 3 childs` }],
+                messages: [{ role: 'user', content: `Create a mind map for ${topic} without hashtags in markdown format with desc of each topic after adding colon and only 3 childs without subtopics of subtopic` }],
             });
             const str = response.data.choices[0].message.content;
             return str
