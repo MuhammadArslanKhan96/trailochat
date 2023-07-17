@@ -53,7 +53,7 @@ const Project = () => {
 
   const socketInitializer = async () => {
     // await axios.get("../../server").finally(() => {
-      socket = io();
+      socket = io('https://main--inspiring-kulfi-f4f745.netlify.app/');
 
       socket.on("connect", () => {
         console.log("connected: " + socket.id);
