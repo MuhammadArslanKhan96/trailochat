@@ -41,7 +41,7 @@ const Header = () => {
               className="flex gap-x-4 items-center"
               onClick={() => {
                 auth.signOut();
-                setUser(undefined);
+                setUser({ email: '' });
               }}
             >
               <div className="text-black text-[16px] font-bold">

@@ -9,7 +9,6 @@ try {
                 credential: admin.credential?.cert(
                     JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_SERVICE_ACCOUNT)
                 ),
-                databaseURL: 'https://rich-inu-ai-default-rtdb.firebaseio.com'
             });
             console.log('Initialized.')
         }
