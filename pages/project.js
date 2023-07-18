@@ -53,7 +53,7 @@ const Project = () => {
 
   const socketInitializer = async () => {
     // await axios.get("../../server").finally(() => {
-    socket = io();
+    socket = io("https://trelloserver.adaptable.app");
 
     socket.on("connect", () => {
       console.log("connected: " + socket.id);

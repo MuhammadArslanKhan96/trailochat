@@ -15,7 +15,7 @@ export default function Accept() {
   }, []);
 
   const socketInitializer = async () => {
-    socket = io();
+    socket = io("https://trelloserver.adaptable.app");
 
     socket.on("connect", () => {
       console.log("connected: " + socket.id);
