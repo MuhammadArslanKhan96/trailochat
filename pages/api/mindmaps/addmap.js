@@ -1,5 +1,4 @@
 import { db } from "../../../libs/firebaseAdmin";
-import { v4 as uuidv4 } from "uuid";
 
 export default async function handler(
     req,
@@ -7,28 +6,17 @@ export default async function handler(
 ) {
     if (req.method === 'POST') {
         try {
-            const citiesRef = db.collection('maps').where('user', '==', req.query.user);
             const collection = db.collection('maps');
-            const snapshot = (await citiesRef.get()).docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-            const snapshot2 = (await collection.get()).docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-            for (var doc2 of snapshot) {
-                await db.collection('maps').doc(doc2.id).delete();
-            }
-            for (var doc2 of (req.body)) {
-                await collection.doc(doc2.mapId).set({
-                    ...doc2,
-                    created_at:
-                        snapshot2.filter(i => (i.topic === doc2.topic)).length ?
-                            snapshot2.filter(i => (i.topic === doc2.topic))[0].created_at
-                            :
-                            new Date().getTime(),
-                    updated_at:
-                        new Date().getTime(),
-                });
-            }
-            res.status(200).json(snapshot)
+
+            await collection.doc(req.body.mapId).set({
+                ...req.body,
+                created_at:
+                    new Date().getTime(),
+                updated_at:
+                    new Date().getTime(),
+            });
+            res.status(200).json({ message: 'done' })
         } catch (error) {
-            console.log(req.body[0])
             console.log(error)
             res.status(400).json(error)
         }

@@ -4,11 +4,14 @@ export default async function handler(
     req,
     res
 ) {
-    if (req.method === 'POST') {
+    if (req.method === 'PUT') {
         try {
-            const collection = db.collection('trellotickets');
-            await collection.doc(req.body.mapId).set({
+            const collection = db.collection('maps');
+
+            await collection.doc(req.query.mapId).set({
                 ...req.body,
+                created_at:
+                    new Date().getTime(),
                 updated_at:
                     new Date().getTime(),
             });

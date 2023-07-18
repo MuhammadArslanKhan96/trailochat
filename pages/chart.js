@@ -24,7 +24,6 @@ const Chart = () => {
   const [loading, setLoading] = useState(false);
   const [popup, setPopup] = useState(false);
   const [inputText, setInputText] = useState("");
-  const newId = uuidv4();
   const router = useRouter();
   const { user, setMaps, maps } = useContext(UserContext);
 
@@ -56,8 +55,24 @@ const Chart = () => {
           ],
         });
         const str = response.data.choices[0].message.content;
-
-        setData(parse(str, topic, true));
+        let data = parse(str, topic, true)
+        setData(data);
+        const newId = uuidv4();
+        let newData = {
+          topic: topic,
+          user: user.email,
+          data: data.map(i => {
+            if (i.id === "root") {
+              return { ...i, mapId: newId }
+            } else {
+              return i
+            }
+          }),
+          created_at: new Date().getTime(),
+          updated_at: new Date().getTime(),
+          mapId: newId,
+        }
+        addMyDocs(newData)
         setLoad(false);
       } catch (error) {
         setLoad(false);
@@ -227,35 +242,35 @@ const Chart = () => {
   }, [select]);
 
   const addMyDocs = async (maps) => {
-    await axios.post(`/api/mindmaps/addmap?user=${user.id}`, maps, {
+    await axios.post(`/api/mindmaps/addmap`, maps, {
       timeout: 300000,
     });
   };
 
+  const updateDoc = async (map) => {
+    await axios.put(`/api/mindmaps/updateMap?mapId=${map.mapId}`, map, {
+      timeout: 300000,
+    });
+  }
+
   useEffect(() => {
-    if (markdown.length && !maps.includes(markdown)) {
-      let newMaps = [
-        ...maps.filter(
-          (i) => i.topic !== markdown.filter((i) => i.id === "root")[0].topic
-        ),
-        {
-          topic: markdown.filter((i) => i.id === "root")[0].topic,
-          user: user.email,
-          data: markdown,
-          created_at:
-            maps.filter(
-              (i) => i.topic === markdown.filter((i) => i.id === "root")[0]
-            )[0]?.created_at || new Date().getTime(),
-          updated_at: new Date().getTime(),
-          mapId:
-            maps.filter(
-              (i) =>
-                i.topic === markdown.filter((i) => i.id === "root")[0].topic
-            )[0]?.mapId || newId,
-        },
-      ];
-      setMaps(newMaps);
-      addMyDocs(newMaps);
+    if (markdown.length && !maps.filter(i => i.data === markdown).length) {
+      let updatedMap = {
+        topic: markdown.filter((i) => i.id === "root")[0].topic,
+        user: user.email,
+        data: markdown,
+        created_at:
+          maps.filter(
+            (i) => i.mapId === markdown.filter((i) => i.id === "root")[0].mapId
+          )[0]?.created_at,
+        updated_at: new Date().getTime(),
+        mapId:
+          markdown.filter((i) => i.id === "root")[0].mapId,
+      }
+      setMaps(pre => ([...pre.filter(
+        (i) => i.mapId !== markdown.mapId
+      ), updatedMap]));
+      updateDoc(updatedMap);
     }
     // eslint-disable-next-line
   }, [markdown]);

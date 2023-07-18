@@ -63,7 +63,7 @@ const Project = () => {
       console.log(msg);
     });
 
-    socket.on("newData", newdata => getNewData(newdata[0], newdata[1]));
+    socket.on("newData", newdata => getNewData(newdata[0], newdata[1], newdata[2]));
 
     if (socket)
       return () => {
@@ -72,8 +72,9 @@ const Project = () => {
     // });
   };
 
-  const getNewData = async (data, incomingdata) => {
-    if (user && incomingdata && incomingdata.users.includes(user.email) && incomingdata.lastUpdatedUser !== user.email && incomingdata.updated_at > currentProject.updated_at) {
+  const getNewData = async (data, incomingdata, updated) => {
+    console.log(data, incomingdata, updated)
+    if (user && incomingdata && incomingdata.users.includes(user.email) && incomingdata.lastUpdatedUser !== user.email && incomingdata.updated_at > updated) {
       if (
         data &&
         data.mapId === incomingdata.mapId &&
@@ -89,14 +90,18 @@ const Project = () => {
   };
 
 
+  const updateDoc = async (map) => {
+    socket.emit("newTrello", [currentProject.data, { ...map, lastUpdatedUser: user.email }, currentProject.updated_at]);
+    await axios.put(`/api/trellotickets/updatetrello?mapId=${map.mapId}`, map, {
+      timeout: 300000,
+    });
+  }
+
   const addMyDocs = async (tickets) => {
     // if(tickets!==trelloTickets){
-    socket.emit("newTrello", [currentProject.data, { ...currentProject, data, lastUpdatedUser: user.email }]);
-    if (tickets.filter(i => i.mapId === currentProject.mapId)[0].updated_at < currentProject.mapId) {
-      await axios.post(`/api/trellotickets/addtrello?user=${user.id}`, tickets, {
-        timeout: 300000,
-      });
-    }
+    await axios.post(`/api/trellotickets/addtrello?user=${user.id}`, tickets, {
+      timeout: 300000,
+    });
     // }
   };
 
@@ -116,24 +121,30 @@ const Project = () => {
   };
 
   useEffect(() => {
+    console.log(data, currentProject)
     if (data || currentProject) {
+      let oldMap = trelloTickets.filter((i) => i.mapId === (data || currentProject).mapId)[0]
+      let newMap = {
+        ...trelloTickets.filter((i) => i.mapId === data.mapId)[0],
+        topic: input ? input : data.topic,
+        data: data,
+        updated_at: new Date().getTime(),
+        users: currentProject.users ? currentProject.users : [user.email],
+        mapId: data.mapId, lastUpdatedUser: user.email
+      }
       let newtrello = [
-        ...trelloTickets.filter((i) => i.mapId !== data.mapId),
-        {
-          ...trelloTickets.filter((i) => i.mapId === data.mapId)[0],
-          topic: input ? input : data.topic,
-          data: data,
-          updated_at: new Date().getTime(),
-          users: currentProject.users ? currentProject.users : [user.email],
-          mapId: data.mapId,
-        },
+        ...trelloTickets.filter((i) => i.mapId !== newMap.mapId),
+        newMap,
       ];
       // console.log(newtrello);
       let d = newtrello.filter((obj, index) => {
         return index === newtrello.findIndex((o) => obj.mapId === o.mapId);
       });
-      setTrelloTickets(d);
-      addMyDocs(d);
+
+      if (oldMap?.data !== data && oldMap?.lastUpdatedUser === user.email) {
+        setTrelloTickets(d);
+        updateDoc(newMap);
+      }
     }
     // eslint-disable-next-line
   }, [data, currentProject]);
@@ -190,17 +201,21 @@ const Project = () => {
             })
             : [],
         };
-
-        setData(newData);
-
-
-        setCurrentProject({
+        let newDoc = {
           topic: topic,
           data: newData,
           updated_at: new Date().getTime(),
           users: [user.email],
           mapId: newData.mapId,
-        });
+          owner: user.email
+        }
+        setData(newDoc.data);
+
+
+        setCurrentProject(newDoc);
+
+
+        addMyDocs([newDoc])
 
         setLoad(false);
       } catch (error) {
