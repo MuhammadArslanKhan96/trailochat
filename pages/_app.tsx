@@ -7,14 +7,17 @@ import React, { useEffect, useState } from 'react'
 import { createContext } from "react";
 import Script from 'next/script';
 import axios from 'axios';
+import { MapType } from '@/types/mapTypes';
+import { TrelloTypes } from '@/types/trelloticketsTypes';
+import { userType } from '@/types/userType';
 export const DataContext = createContext(null);
 export const UserContext = createContext<any>({ user: '' });
 export default function App({ Component, pageProps }: AppProps) {
-  const [user, setUser] = useState<{ email?: string; name?: string; image?: string; tier?: string; id?: string; }>();
-  const [maps, setMaps] = useState([]);
-  const [trelloTickets, setTrelloTickets] = useState([]);
-  const [Mymaps, setMyMaps] = useState([]);
-  const [MytrelloTickets, setMyTrelloTickets] = useState([]);
+  const [user, setUser] = useState<userType>({ email: '' });
+  const [maps, setMaps] = useState<MapType[]>([]);
+  const [trelloTickets, setTrelloTickets] = useState<TrelloTypes[]>([]);
+  const [Mymaps, setMyMaps] = useState<MapType[]>([]);
+  const [MytrelloTickets, setMyTrelloTickets] = useState<TrelloTypes[]>([]);
   useEffect(() => {
     const isDoingTransaction = `${localStorage.getItem('transaction')}`;
     if (isDoingTransaction === 'null') {
@@ -35,9 +38,9 @@ export default function App({ Component, pageProps }: AppProps) {
     getData()
   }, [])
   useEffect(() => {
-    if (user) {
+    if (user.email) {
       setMyMaps(maps.filter(i => i.user === user.email));
-      setMyTrelloTickets(trelloTickets.filter(i => i.users.includes(user.email)));
+      setMyTrelloTickets(trelloTickets.filter(i => i?.users?.includes(user?.email)));
     }
     // eslint-disable-next-line
   }, [user, maps, trelloTickets])

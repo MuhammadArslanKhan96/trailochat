@@ -40,7 +40,7 @@ const Project = () => {
   useOutside(popupRef, setCreatePopup);
 
   useEffect(() => {
-    if (!user) {
+    if (!user.email) {
       router.replace(`/signin`);
     }
     // eslint-disable-next-line
@@ -74,7 +74,7 @@ const Project = () => {
 
   const getNewData = async (data, incomingdata, updated) => {
     console.log(data, incomingdata, updated)
-    if (user && incomingdata && incomingdata.users.includes(user.email) && incomingdata.lastUpdatedUser !== user.email && incomingdata.updated_at > updated) {
+    if (user.email && incomingdata && incomingdata.users.includes(user.email) && incomingdata.lastUpdatedUser !== user.email && incomingdata.updated_at > updated) {
       if (
         data &&
         data.mapId === incomingdata.mapId &&
@@ -99,7 +99,8 @@ const Project = () => {
 
   const addMyDocs = async (tickets) => {
     // if(tickets!==trelloTickets){
-    await axios.post(`/api/trellotickets/addtrello?user=${user.id}`, tickets, {
+    setTrelloTickets(pre => ([...pre, tickets]))
+    await axios.post(`/api/trellotickets/addtrello`, tickets, {
       timeout: 300000,
     });
     // }
@@ -123,7 +124,8 @@ const Project = () => {
   useEffect(() => {
     console.log(data, currentProject)
     if (data || currentProject) {
-      let oldMap = trelloTickets.filter((i) => i.mapId === (data || currentProject).mapId)[0]
+      let oldMap = trelloTickets.filter((i) => i.mapId === (data || currentProject).mapId)[0];
+      console.log(oldMap);
       let newMap = {
         ...trelloTickets.filter((i) => i.mapId === data.mapId)[0],
         topic: input ? input : data.topic,
@@ -207,7 +209,7 @@ const Project = () => {
           updated_at: new Date().getTime(),
           users: [user.email],
           mapId: newData.mapId,
-          owner: user.email
+          owner: user.email, lastUpdatedUser: user.email
         }
         setData(newDoc.data);
 
@@ -215,7 +217,7 @@ const Project = () => {
         setCurrentProject(newDoc);
 
 
-        addMyDocs([newDoc])
+        addMyDocs(newDoc)
 
         setLoad(false);
       } catch (error) {

@@ -43,7 +43,7 @@ export default function Accept() {
   };
 
   useEffect(() => {
-    if (!user) {
+    if (!user.email) {
       router.push(`/signin?accept=${router.query.id}`)
     }
   }, [router, user])

@@ -38,8 +38,8 @@ const Signup = () => {
             });
     }
     useEffect(() => {
-        if (user) {
-            router.replace(router.query.accept?`/accept?id=${router.query.accept}`:'/mindmap')
+        if (user.email) {
+            router.replace(router.query.accept ? `/accept?id=${router.query.accept}` : '/mindmap')
         }
         // eslint-disable-next-line
     }, [user])

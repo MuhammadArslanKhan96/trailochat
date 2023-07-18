@@ -24,7 +24,7 @@ const Signin = () => {
   const router = useRouter();
   const { user, setUser } = useContext(UserContext);
   useEffect(() => {
-    if (user) {
+    if (user.email) {
       router.replace(
         router.query.accept ? `/accept?id=${router.query.accept}` : "/mindmap"
       );

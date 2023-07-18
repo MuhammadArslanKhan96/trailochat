@@ -28,7 +28,7 @@ const Chart = () => {
   const { user, setMaps, maps } = useContext(UserContext);
 
   useEffect(() => {
-    if (!user) {
+    if (!user.email) {
       router.replace(`/signin`);
     }
     // eslint-disable-next-line
@@ -73,6 +73,7 @@ const Chart = () => {
           mapId: newId,
         }
         addMyDocs(newData)
+        setMaps(pre => ([...pre, newData]))
         setLoad(false);
       } catch (error) {
         setLoad(false);

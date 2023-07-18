@@ -9,7 +9,7 @@ const Plan = () => {
   const [active, setActive] = React.useState("standard");
   const router = useRouter();
   const createPlan = async (tier) => {
-    if (user) {
+    if (user.email) {
       const { data } = await axios.post(`/api/create_session`, {
         plan: tier,
       });
@@ -30,7 +30,7 @@ const Plan = () => {
       localStorage.setItem("transaction", "false");
     }
     if (
-      user &&
+      user.email &&
       router &&
       router.query.success &&
       localStorage.getItem("transaction") === "true"
@@ -157,11 +157,11 @@ const Plan = () => {
               </ul>
               <button
                 type="button"
-                disabled={user && user.tier === "Free"}
+                disabled={user.email && user.tier === "Free"}
                 className={
                   "text-white font-bold mt-[30px] max-sm:mt-[10px] bg-[#1A2CB4] rounded-[10px] text-[25px] max-sm:text-[12px] px-[12px] py-[9px] inline-flex justify-center w-full text-center" +
                   ` ${
-                    user && user.tier === "Free"
+                    user.email && user.tier === "Free"
                       ? "cursor-not-allowed"
                       : "cursor-pointer"
                   }`
@@ -269,12 +269,12 @@ const Plan = () => {
                 </li>
               </ul>
               <button
-                disabled={user && user.tier === "Standard"}
+                disabled={user.email && user.tier === "Standard"}
                 type="button"
                 className={
                   "text-white font-bold mt-[30px] bg-[#1A2CB4] rounded-[10px] text-[20px] max-sm:text-[12px] px-5 py-2.5 inline-flex justify-center w-full text-center" +
                   ` ${
-                    user && user.tier === "Standard"
+                    user.email && user.tier === "Standard"
                       ? "cursor-not-allowed"
                       : "cursor-pointer"
                   }`
@@ -383,12 +383,12 @@ const Plan = () => {
               </ul>
               <div className="pb-[20px]">
                 <button
-                  disabled={user && user.tier === "Pro"}
+                  disabled={user.email && user.tier === "Pro"}
                   type="button"
                   className={
                     "text-white font-bold mt-[28px] mb-[5px]  bg-[#1A2CB4] rounded-[10px] text-[22px] max-sm:text-[12px] px-5 py-2.5 inline-flex justify-center w-full text-center" +
                     ` ${
-                      user && user.tier === "Pro"
+                      user.email && user.tier === "Pro"
                         ? "cursor-not-allowed"
                         : "cursor-pointer"
                     }`

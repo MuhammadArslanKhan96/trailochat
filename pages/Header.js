@@ -23,19 +23,19 @@ const Header = () => {
               href="/mindmap?redirect=chart"
               className="flex items-center text-[16px] font-bold bg-[#625BF7] text-[#fff] rounded-[10px] px-4 py-2"
             >
-                Create a new MindMap
+              Create a new MindMap
             </Link>
 
             <Link
               href="/mindmap?redirect=project"
               className="flex items-center text-[16px] font-bold bg-[#625BF7] text-[#fff] rounded-[10px] px-4 py-2"
             >
-                Create a new Trello
+              Create a new Trello
             </Link>
           </div>
         )}
 
-        {user ? (
+        {user.email ? (
           <div>
             <div
               className="flex gap-x-4 items-center"
